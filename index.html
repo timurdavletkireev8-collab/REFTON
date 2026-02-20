@@ -379,7 +379,7 @@
     
     <!-- SECTIONS -->
     <div class="section-container">
-        <!-- ADS SECTION -->
+        <!-- ADS SECTION (Rewarded Video - ID: 23154) -->
         <div id="adsSection" class="section active">
             <div class="glass-card">
                 <img src="https://i.postimg.cc/QxQR12PR/ads.png" alt="Ads" class="section-image">
@@ -411,7 +411,7 @@
             </div>
         </div>
         
-        <!-- TASKS SECTION (НОВЫЙ РАЗДЕЛ) -->
+        <!-- TASKS SECTION (Task Ads - ID: 23158) -->
         <div id="tasksSection" class="section">
             <div class="glass-card">
                 <h3 style="margin-bottom: 20px; text-align: center;">📋 Complete Tasks & Earn</h3>
@@ -580,10 +580,13 @@
             }
             
             const TG_USER = Telegram?.initDataUnsafe?.user || { id: Date.now(), first_name: 'User' };
-            const BOT_USERNAME = 'RefTON_bot'; // ЗАМЕНИ
+            const BOT_USERNAME = 'RefTON_bot'; // ЗАМЕНИ НА СВОЕГО БОТА
             const DAILY_LIMIT = 12;
             const COOLDOWN_SECONDS = 35;
-            const ADSGRAM_BLOCK_ID = 'YOUR_BLOCK_ID'; // ЗАМЕНИ
+            
+            // ===== ADSGRAM ID =====
+            const REWARDED_ADS_BLOCK_ID = '23154';      // Для раздела ADS
+            const TASK_ADS_BLOCK_ID = '23158';          // Для раздела TASKS
             
             // ===== КУРСЫ =====
             const COIN_TO_USD = 0.001; // 1000 монет = $1
@@ -681,7 +684,7 @@
                 return 'bronze';
             }
             
-            // ===== ADSGRAM =====
+            // ===== ADSGRAM (Rewarded Video - 23154) =====
             async function watchAd() {
                 if (state.cooldown > 0) {
                     showToast(`Please wait ${state.cooldown}s`);
@@ -694,7 +697,7 @@
                 
                 try {
                     const AdController = window.Adsgram.init({
-                        blockId: ADSGRAM_BLOCK_ID,
+                        blockId: REWARDED_ADS_BLOCK_ID,
                         debug: false
                     });
                     
@@ -712,6 +715,7 @@
                     startCooldown();
                     
                 } catch (error) {
+                    console.error('Ad error:', error);
                     showToast('Ad failed');
                 }
             }
@@ -765,7 +769,7 @@
                 showToast('+50 daily bonus!');
             }
             
-            // ===== ЗАДАНИЯ =====
+            // ===== ЗАДАНИЯ (Task Ads - 23158) =====
             const tasks = [
                 { id: 'task1', name: 'Follow @crypto_news', reward: 200, link: 'https://t.me/crypto_news' },
                 { id: 'task2', name: 'Join TON Community', reward: 300, link: 'https://t.me/ton_community' },
@@ -790,9 +794,19 @@
                         return;
                     }
                 } else {
-                    // Для остальных заданий просто открываем ссылку
-                    if (task.link) {
-                        window.open(task.link, '_blank');
+                    // Для остальных заданий показываем Task Ad из Adsgram
+                    try {
+                        const TaskController = window.Adsgram.init({
+                            blockId: TASK_ADS_BLOCK_ID,
+                            debug: false
+                        });
+                        
+                        await TaskController.show();
+                        
+                    } catch (error) {
+                        console.error('Task ad error:', error);
+                        showToast('Task ad failed');
+                        return;
                     }
                 }
                 
