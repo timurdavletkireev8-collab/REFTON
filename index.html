@@ -390,16 +390,29 @@
             </div>
         </div>
         
-        <!-- TASKS SECTION -->
-        <div id="tasksSection" class="section">
-            <div class="glass-card">
-                <h3 style="margin-bottom: 20px; text-align: center;">📋 Tasks</h3>
-                <button class="refton-button" id="showTaskAdBtn">
-                    <span>🚀</span>
-                    Get New Task
-                </button>
-            </div>
+      <!-- TASKS SECTION -->
+<div id="tasksSection" class="section">
+    <div class="glass-card">
+        <!-- Lottie анимация (подарок) -->
+        <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <dotlottie-player 
+                src="https://raw.githubusercontent.com/your-repo/refTON/main/gift-animation.json" 
+                background="transparent" 
+                speed="1" 
+                style="width: 150px; height: 150px;" 
+                loop 
+                autoplay>
+            </dotlottie-player>
         </div>
+        
+        <h3 style="margin-bottom: 20px; text-align: center;">📋 Tasks</h3>
+        <button class="refton-button" id="showTaskAdBtn">
+            <span>🚀</span>
+            Get New Task
+        </button>
+    </div>
+</div>
         
         <!-- REFERRALS SECTION -->
         <div id="referralsSection" class="section">
