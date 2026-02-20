@@ -167,6 +167,11 @@
             transform: scale(0.97);
         }
         
+        .refton-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
         .refton-button-outline {
             background: transparent;
             border: 2px solid #4D7EFF;
@@ -176,6 +181,11 @@
         
         .refton-button-outline:active {
             background: rgba(77, 126, 255, 0.1);
+        }
+        
+        .refton-button-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .hidden { display: none; }
@@ -262,92 +272,79 @@
             border-bottom: none;
         }
         
-        .language-selector {
+        .tasks-grid {
             display: flex;
+            flex-direction: column;
             gap: 12px;
-            justify-content: center;
             margin-top: 20px;
         }
         
-        .lang-btn {
-            background: rgba(20, 30, 50, 0.5);
-            border: 1px solid rgba(77, 126, 255, 0.3);
-            border-radius: 40px;
-            padding: 8px 24px;
-            color: #8E9AB0;
-            cursor: pointer;
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid rgba(77, 126, 255, 0.2);
             transition: all 0.2s;
-            font-weight: 600;
         }
         
-        .lang-btn.active {
-            background: #4D7EFF;
-            color: white;
+        .task-item:hover {
             border-color: #4D7EFF;
+            background: rgba(77, 126, 255, 0.05);
         }
         
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+        .task-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(77, 126, 255, 0.2);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-        }
-        
-        .modal-content {
-            background: #0A0F1F;
-            border: 2px solid #4D7EFF;
-            border-radius: 32px;
-            padding: 32px;
-            max-width: 300px;
-            text-align: center;
-        }
-        
-        .modal-title {
             font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #4D7EFF, #00FFA3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
-        .modal-btn {
+        .task-info {
+            flex: 1;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .task-reward {
+            color: #00FFA3;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .task-button {
             background: transparent;
             border: 2px solid #4D7EFF;
-            border-radius: 60px;
-            padding: 16px;
-            width: 100%;
-            margin: 8px 0;
+            border-radius: 40px;
+            padding: 8px 16px;
             color: white;
-            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .modal-btn:hover {
+        .task-button:hover {
             background: #4D7EFF;
+        }
+        
+        .task-button.completed {
+            background: #00FFA3;
+            border-color: #00FFA3;
+            color: #03050B;
+            cursor: default;
         }
     </style>
 </head>
 <body>
-    <!-- МОДАЛКА ВЫБОРА ЯЗЫКА (ТОЛЬКО ПРИ ПЕРВОМ ЗАХОДЕ) -->
-    <div id="languageModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-title">🌍 Choose language</div>
-            <div class="modal-title" style="font-size: 18px; margin-top: -15px; -webkit-text-fill-color: white; background: none;">Выберите язык</div>
-            <button class="modal-btn" id="selectEnglish">🇺🇸 English</button>
-            <button class="modal-btn" id="selectRussian">🇷🇺 Русский</button>
-        </div>
-    </div>
-    
     <!-- HEADER -->
     <div class="header">
         <div class="logo">
@@ -360,98 +357,161 @@
         </div>
     </div>
     
-    <!-- НАВИГАЦИЯ -->
+    <!-- NAVIGATION -->
     <div class="nav-grid">
         <div class="nav-item active" data-section="ads">
             <div class="nav-icon">📺</div>
-            <div data-i18n="nav.ads">ADS</div>
+            <div>ADS</div>
+        </div>
+        <div class="nav-item" data-section="tasks">
+            <div class="nav-icon">📋</div>
+            <div>TASKS</div>
         </div>
         <div class="nav-item" data-section="referrals">
             <div class="nav-icon">👥</div>
-            <div data-i18n="nav.ref">REF</div>
+            <div>REF</div>
         </div>
         <div class="nav-item" data-section="profile">
             <div class="nav-icon">👤</div>
-            <div data-i18n="nav.profile">PROFILE</div>
-        </div>
-        <div class="nav-item" data-section="leaderboard">
-            <div class="nav-icon">🏆</div>
-            <div data-i18n="nav.top">TOP</div>
+            <div>PROFILE</div>
         </div>
     </div>
     
-    <!-- КОНТЕЙНЕР С РАЗДЕЛАМИ -->
+    <!-- SECTIONS -->
     <div class="section-container">
-        <!-- ADS -->
+        <!-- ADS SECTION -->
         <div id="adsSection" class="section active">
             <div class="glass-card">
                 <img src="https://i.postimg.cc/QxQR12PR/ads.png" alt="Ads" class="section-image">
                 
-                <h3 style="margin-bottom: 20px; text-align: center;" data-i18n="ads.title">📺 Watch Ads & Earn</h3>
+                <h3 style="margin-bottom: 20px; text-align: center;">📺 Watch Ads & Earn</h3>
                 
                 <div style="display: flex; justify-content: space-between; margin-bottom: 16px; color: #8E9AB0;">
-                    <span><span data-i18n="ads.today">Today</span>: <span id="dailyViews">0</span>/12</span>
+                    <span>Today: <span id="dailyViews">0</span>/12</span>
                     <span id="cooldownDisplay" class="hidden"></span>
                 </div>
                 
                 <div id="cooldownTimer" class="cooldown-timer hidden">
                     <span>⏱️</span>
                     <span id="timerSeconds">0</span>
-                    <span data-i18n="ads.seconds">seconds until next ad</span>
+                    <span>seconds until next ad</span>
                 </div>
                 
                 <button class="refton-button" id="watchAdBtn">
                     <span>🎬</span>
-                    <span data-i18n="ads.watchBtn">Watch Ad & Earn 100 Coins</span>
+                    Watch Ad & Earn 100 Coins
                 </button>
                 
                 <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <h4 style="margin-bottom: 16px;" data-i18n="ads.dailyBonus">🎁 Daily Bonus</h4>
+                    <h4 style="margin-bottom: 16px;">🎁 Daily Bonus</h4>
                     <button class="refton-button-outline" style="width: 100%; padding: 12px;" id="dailyBonusBtn">
-                        <span data-i18n="ads.claimBtn">Claim Daily Bonus</span>
+                        Claim Daily Bonus
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- REFERRALS -->
+        <!-- TASKS SECTION (НОВЫЙ РАЗДЕЛ) -->
+        <div id="tasksSection" class="section">
+            <div class="glass-card">
+                <h3 style="margin-bottom: 20px; text-align: center;">📋 Complete Tasks & Earn</h3>
+                
+                <div class="tasks-grid">
+                    <!-- Task 1 -->
+                    <div class="task-item" id="task1">
+                        <div class="task-icon">📱</div>
+                        <div class="task-info">
+                            <div class="task-title">Follow @crypto_news</div>
+                            <div class="task-reward">+200 coins</div>
+                        </div>
+                        <button class="task-button" id="task1Btn">Start</button>
+                    </div>
+                    
+                    <!-- Task 2 -->
+                    <div class="task-item" id="task2">
+                        <div class="task-icon">🐦</div>
+                        <div class="task-info">
+                            <div class="task-title">Join TON Community</div>
+                            <div class="task-reward">+300 coins</div>
+                        </div>
+                        <button class="task-button" id="task2Btn">Start</button>
+                    </div>
+                    
+                    <!-- Task 3 -->
+                    <div class="task-item" id="task3">
+                        <div class="task-icon">📢</div>
+                        <div class="task-info">
+                            <div class="task-title">Subscribe to RefTON channel</div>
+                            <div class="task-reward">+150 coins</div>
+                        </div>
+                        <button class="task-button" id="task3Btn">Start</button>
+                    </div>
+                    
+                    <!-- Task 4 -->
+                    <div class="task-item" id="task4">
+                        <div class="task-icon">🤖</div>
+                        <div class="task-info">
+                            <div class="task-title">Try Crypto Bot</div>
+                            <div class="task-reward">+500 coins</div>
+                        </div>
+                        <button class="task-button" id="task4Btn">Start</button>
+                    </div>
+                    
+                    <!-- Task 5 -->
+                    <div class="task-item" id="task5">
+                        <div class="task-icon">💎</div>
+                        <div class="task-info">
+                            <div class="task-title">Invite 3 friends</div>
+                            <div class="task-reward">+1000 coins</div>
+                        </div>
+                        <button class="task-button" id="task5Btn">Start</button>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; color: #8E9AB0; font-size: 14px; margin-top: 20px;">
+                    New tasks added daily!
+                </p>
+            </div>
+        </div>
+        
+        <!-- REFERRALS SECTION -->
         <div id="referralsSection" class="section">
             <div class="glass-card">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
                     <img src="https://i.postimg.cc/rF1vxB36/referral.png" alt="Referral" style="width: 48px; height: 48px;">
-                    <h3 data-i18n="ref.title">Your Referral Link</h3>
+                    <h3>Your Referral Link</h3>
                 </div>
                 
                 <div class="referral-link-box" id="referralLink">Loading...</div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
                     <button class="refton-button-outline" style="padding: 12px;" id="copyLinkBtn">
-                        📋 <span data-i18n="ref.copy">Copy</span>
+                        📋 Copy
                     </button>
                     <button class="refton-button-outline" style="padding: 12px;" id="shareLinkBtn">
-                        📤 <span data-i18n="ref.share">Share</span>
+                        📤 Share
                     </button>
                 </div>
                 
-                <h4 style="margin-bottom: 16px;" data-i18n="ref.stats">📊 Your Stats</h4>
+                <h4 style="margin-bottom: 16px;">📊 Your Stats</h4>
                 <div style="background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px;">
                     <div class="stats-row">
-                        <span data-i18n="ref.level1">Level 1 referrals</span>
+                        <span>Level 1 referrals</span>
                         <span style="font-weight: 600; color: #4D7EFF;" id="level1Count">0</span>
                     </div>
                     <div class="stats-row">
-                        <span data-i18n="ref.level2">Level 2 referrals</span>
+                        <span>Level 2 referrals</span>
                         <span style="font-weight: 600; color: #00FFA3;" id="level2Count">0</span>
                     </div>
                     <div class="stats-row">
-                        <span data-i18n="ref.earned">Earned from referrals</span>
+                        <span>Earned from referrals</span>
                         <span style="font-weight: 600;" id="referralEarned">0</span>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- PROFILE -->
+        <!-- PROFILE SECTION -->
         <div id="profileSection" class="section">
             <div class="glass-card">
                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
@@ -461,7 +521,7 @@
                     <div>
                         <div style="font-size: 22px; font-weight: 600;" id="userName">User</div>
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="color: #8E9AB0;" data-i18n="profile.rank">Rank</span>
+                            <span style="color: #8E9AB0;">Rank:</span>
                             <span class="rank-badge rank-bronze" id="userRank">Bronze</span>
                         </div>
                     </div>
@@ -469,61 +529,26 @@
                 
                 <div style="background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px;">
                     <div class="stats-row">
-                        <span data-i18n="profile.totalEarned">Total earned</span>
+                        <span>Total earned</span>
                         <span style="font-weight: 600;" id="profileTotalEarned">0</span>
                     </div>
                     <div class="stats-row">
-                        <span data-i18n="profile.totalReferrals">Total referrals</span>
+                        <span>Total referrals</span>
                         <span style="font-weight: 600;" id="profileReferrals">0</span>
                     </div>
                     <div class="stats-row">
-                        <span data-i18n="profile.totalViews">Total views</span>
+                        <span>Total views</span>
                         <span style="font-weight: 600;" id="profileViews">0</span>
                     </div>
                     <div class="stats-row">
-                        <span data-i18n="profile.joined">Joined</span>
+                        <span>Tasks completed</span>
+                        <span style="font-weight: 600;" id="profileTasks">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>Joined</span>
                         <span style="font-weight: 600;" id="joinDate">Today</span>
                     </div>
                 </div>
-                
-                <!-- ВЫБОР ЯЗЫКА -->
-                <div class="language-selector">
-                    <div class="lang-btn" id="langEn">🇺🇸 EN</div>
-                    <div class="lang-btn" id="langRu">🇷🇺 RU</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- LEADERBOARD -->
-        <div id="leaderboardSection" class="section">
-            <div class="glass-card">
-                <h3 style="margin-bottom: 20px; text-align: center;" data-i18n="top.title">🏆 Top Referrers</h3>
-                
-                <div style="margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; padding: 16px; background: rgba(77,126,255,0.1); border-radius: 16px; margin-bottom: 8px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 24px;">🥇</span>
-                            <span style="font-weight: 600;">CryptoKing</span>
-                        </div>
-                        <span style="font-weight: 700; color: #4D7EFF;">1,234</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 8px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 24px;">🥈</span>
-                            <span style="font-weight: 600;">TONWhale</span>
-                        </div>
-                        <span style="font-weight: 700; color: #4D7EFF;">987</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 16px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 24px;">🥉</span>
-                            <span style="font-weight: 600;">BlockMaster</span>
-                        </div>
-                        <span style="font-weight: 700; color: #4D7EFF;">756</span>
-                    </div>
-                </div>
-                
-                <p style="text-align: center; color: #8E9AB0; font-size: 14px; margin-top: 20px;" data-i18n="top.more">More coming soon...</p>
             </div>
         </div>
     </div>
@@ -561,64 +586,7 @@
             const ADSGRAM_BLOCK_ID = 'YOUR_BLOCK_ID'; // ЗАМЕНИ
             
             // ===== КУРСЫ =====
-            const COIN_TO_USD = 0.001;
-            const USD_TO_TON = 2.5;
-            
-            // ===== ПЕРЕВОДЫ =====
-            const translations = {
-                en: {
-                    'nav.ads': 'ADS',
-                    'nav.ref': 'REF',
-                    'nav.profile': 'PROFILE',
-                    'nav.top': 'TOP',
-                    'ads.title': '📺 Watch Ads & Earn',
-                    'ads.today': 'Today',
-                    'ads.seconds': 'seconds until next ad',
-                    'ads.watchBtn': 'Watch Ad & Earn 100 Coins',
-                    'ads.dailyBonus': '🎁 Daily Bonus',
-                    'ads.claimBtn': 'Claim Daily Bonus',
-                    'ref.title': 'Your Referral Link',
-                    'ref.copy': 'Copy',
-                    'ref.share': 'Share',
-                    'ref.stats': '📊 Your Stats',
-                    'ref.level1': 'Level 1 referrals',
-                    'ref.level2': 'Level 2 referrals',
-                    'ref.earned': 'Earned from referrals',
-                    'profile.rank': 'Rank',
-                    'profile.totalEarned': 'Total earned',
-                    'profile.totalReferrals': 'Total referrals',
-                    'profile.totalViews': 'Total views',
-                    'profile.joined': 'Joined',
-                    'top.title': '🏆 Top Referrers',
-                    'top.more': 'More coming soon...'
-                },
-                ru: {
-                    'nav.ads': 'РЕКЛАМА',
-                    'nav.ref': 'РЕФЕРАЛЫ',
-                    'nav.profile': 'ПРОФИЛЬ',
-                    'nav.top': 'ТОП',
-                    'ads.title': '📺 Смотри рекламу и зарабатывай',
-                    'ads.today': 'Сегодня',
-                    'ads.seconds': 'секунд до след. рекламы',
-                    'ads.watchBtn': 'Смотреть рекламу +100 монет',
-                    'ads.dailyBonus': '🎁 Ежедневный бонус',
-                    'ads.claimBtn': 'Забрать бонус',
-                    'ref.title': 'Твоя реферальная ссылка',
-                    'ref.copy': 'Копировать',
-                    'ref.share': 'Поделиться',
-                    'ref.stats': '📊 Твоя статистика',
-                    'ref.level1': 'Рефералов 1 уровня',
-                    'ref.level2': 'Рефералов 2 уровня',
-                    'ref.earned': 'Заработано с рефералов',
-                    'profile.rank': 'Ранг',
-                    'profile.totalEarned': 'Всего заработано',
-                    'profile.totalReferrals': 'Всего рефералов',
-                    'profile.totalViews': 'Всего просмотров',
-                    'profile.joined': 'Присоединился',
-                    'top.title': '🏆 Топ рефереров',
-                    'top.more': 'Скоро будет больше...'
-                }
-            };
+            const COIN_TO_USD = 0.001; // 1000 монет = $1
             
             // ===== СОСТОЯНИЕ =====
             let state = {
@@ -632,45 +600,13 @@
                     viewsToday: 0,
                     totalViews: 0,
                     totalEarned: 0,
-                    joinDate: new Date().toISOString().split('T')[0],
-                    language: null
+                    tasksCompleted: 0,
+                    completedTasks: [], // массив ID выполненных заданий
+                    joinDate: new Date().toISOString().split('T')[0]
                 },
                 cooldown: 0,
-                timerInterval: null,
-                currentLanguage: 'en'
+                timerInterval: null
             };
-            
-            // ===== ПЕРЕВОД (ОСНОВНАЯ ФУНКЦИЯ) =====
-            function applyLanguage(lang) {
-                if (!lang || !translations[lang]) return;
-                
-                state.currentLanguage = lang;
-                
-                // Обновляем все элементы с data-i18n
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if (translations[lang][key]) {
-                        el.textContent = translations[lang][key];
-                    }
-                });
-                
-                // Обновляем активную кнопку языка
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                if (lang === 'en') {
-                    document.getElementById('langEn').classList.add('active');
-                } else {
-                    document.getElementById('langRu').classList.add('active');
-                }
-                
-                // Сохраняем в Firebase
-                if (state.user.id) {
-                    db.collection('users').doc(state.user.id).update({
-                        language: lang
-                    }).catch(() => {});
-                }
-            }
             
             // ===== ЗАГРУЗКА ИЗ FIRESTORE =====
             async function loadUserFromFirestore() {
@@ -682,29 +618,24 @@
                         const data = docSnap.data();
                         state.user = { ...state.user, ...data };
                         
-                        // Если язык уже выбран - применяем
-                        if (data.language) {
-                            applyLanguage(data.language);
-                        } else {
-                            // Новый пользователь - показываем модалку
-                            document.getElementById('languageModal').style.display = 'flex';
+                        // Сброс daily счетчика если новый день
+                        const lastDate = localStorage.getItem('refton_lastDate');
+                        const today = new Date().toDateString();
+                        if (lastDate !== today) {
+                            state.user.viewsToday = 0;
+                            localStorage.setItem('refton_lastDate', today);
                         }
                     } else {
-                        // Новый пользователь - показываем модалку
-                        document.getElementById('languageModal').style.display = 'flex';
-                        
-                        // Сразу создаем запись в Firebase
-                        await db.collection('users').doc(state.user.id).set({
-                            ...state.user,
-                            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+                        // Новый пользователь - создаем запись
+                        await db.collection('users').doc(state.user.id).set(state.user);
                     }
                     
                     updateUI();
+                    updateTaskButtons();
                     
                 } catch (error) {
                     console.error('Firestore error:', error);
-                    // Если ошибка, пробуем из localStorage
+                    // Резерв из localStorage
                     loadFromStorage();
                 }
             }
@@ -723,16 +654,9 @@
                             state.user.viewsToday = 0;
                             localStorage.setItem('refton_lastDate', today);
                         }
-                        
-                        if (parsed.language) {
-                            applyLanguage(parsed.language);
-                        } else {
-                            document.getElementById('languageModal').style.display = 'flex';
-                        }
-                    } else {
-                        document.getElementById('languageModal').style.display = 'flex';
                     }
                 } catch (e) {}
+                updateUI();
             }
             
             // ===== СОХРАНЕНИЕ В FIRESTORE =====
@@ -744,7 +668,6 @@
                     });
                 } catch (error) {
                     console.error('Firestore save error:', error);
-                    // Резерв в localStorage
                     localStorage.setItem('refton_user', JSON.stringify(state.user));
                 }
             }
@@ -761,11 +684,11 @@
             // ===== ADSGRAM =====
             async function watchAd() {
                 if (state.cooldown > 0) {
-                    showToast(state.currentLanguage === 'en' ? `Please wait ${state.cooldown}s` : `Подождите ${state.cooldown}с`);
+                    showToast(`Please wait ${state.cooldown}s`);
                     return;
                 }
                 if (state.user.viewsToday >= DAILY_LIMIT) {
-                    showToast(state.currentLanguage === 'en' ? 'Daily limit reached!' : 'Лимит на сегодня!');
+                    showToast('Daily limit reached!');
                     return;
                 }
                 
@@ -785,11 +708,11 @@
                     
                     await saveToFirestore();
                     updateUI();
-                    showToast(state.currentLanguage === 'en' ? '+100 coins!' : '+100 монет!');
+                    showToast('+100 coins!');
                     startCooldown();
                     
                 } catch (error) {
-                    showToast(state.currentLanguage === 'en' ? 'Ad failed' : 'Ошибка рекламы');
+                    showToast('Ad failed');
                 }
             }
             
@@ -831,7 +754,7 @@
                 const today = new Date().toDateString();
                 
                 if (lastBonus === today) {
-                    showToast(state.currentLanguage === 'en' ? 'Already claimed!' : 'Уже забрал!');
+                    showToast('Already claimed today!');
                     return;
                 }
                 
@@ -839,7 +762,66 @@
                 localStorage.setItem('lastBonus', today);
                 await saveToFirestore();
                 updateUI();
-                showToast(state.currentLanguage === 'en' ? '+50 bonus!' : '+50 бонус!');
+                showToast('+50 daily bonus!');
+            }
+            
+            // ===== ЗАДАНИЯ =====
+            const tasks = [
+                { id: 'task1', name: 'Follow @crypto_news', reward: 200, link: 'https://t.me/crypto_news' },
+                { id: 'task2', name: 'Join TON Community', reward: 300, link: 'https://t.me/ton_community' },
+                { id: 'task3', name: 'Subscribe to RefTON channel', reward: 150, link: 'https://t.me/refton' },
+                { id: 'task4', name: 'Try Crypto Bot', reward: 500, link: 'https://t.me/CryptoBot' },
+                { id: 'task5', name: 'Invite 3 friends', reward: 1000, link: null } // специальное задание
+            ];
+            
+            async function completeTask(taskId) {
+                if (state.user.completedTasks.includes(taskId)) {
+                    showToast('Task already completed!');
+                    return;
+                }
+                
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) return;
+                
+                // Для задания "Invite 3 friends" проверяем количество рефералов
+                if (taskId === 'task5') {
+                    if (state.user.referrals.level1.length < 3) {
+                        showToast('You need 3 referrals first!');
+                        return;
+                    }
+                } else {
+                    // Для остальных заданий просто открываем ссылку
+                    if (task.link) {
+                        window.open(task.link, '_blank');
+                    }
+                }
+                
+                // Начисляем награду
+                state.user.coins += task.reward;
+                state.user.completedTasks.push(taskId);
+                state.user.tasksCompleted++;
+                
+                await saveToFirestore();
+                updateUI();
+                updateTaskButtons();
+                showToast(`+${task.reward} coins!`);
+            }
+            
+            function updateTaskButtons() {
+                tasks.forEach(task => {
+                    const btn = document.getElementById(`${task.id}Btn`);
+                    if (btn) {
+                        if (state.user.completedTasks.includes(task.id)) {
+                            btn.textContent = 'Completed';
+                            btn.classList.add('completed');
+                            btn.disabled = true;
+                        } else {
+                            btn.textContent = 'Start';
+                            btn.classList.remove('completed');
+                            btn.disabled = false;
+                        }
+                    }
+                });
             }
             
             // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
@@ -852,8 +834,7 @@
                 // Баланс
                 document.getElementById('balanceDisplay').textContent = state.user.coins;
                 const usdValue = (state.user.coins * COIN_TO_USD).toFixed(2);
-                const tonValue = (usdValue * USD_TO_TON).toFixed(2);
-                document.getElementById('usdDisplay').textContent = `≈$${usdValue} / ${tonValue} TON`;
+                document.getElementById('usdDisplay').textContent = `≈$${usdValue}`;
                 
                 // ADS
                 document.getElementById('dailyViews').textContent = state.user.viewsToday;
@@ -873,6 +854,7 @@
                 document.getElementById('profileTotalEarned').textContent = state.user.totalEarned;
                 document.getElementById('profileReferrals').textContent = state.user.referrals.level1.length;
                 document.getElementById('profileViews').textContent = state.user.totalViews;
+                document.getElementById('profileTasks').textContent = state.user.tasksCompleted;
                 document.getElementById('joinDate').textContent = new Date(state.user.joinDate).toLocaleDateString();
             }
             
@@ -901,44 +883,21 @@
                 
                 document.getElementById('copyLinkBtn').addEventListener('click', () => {
                     navigator.clipboard.writeText(getReferralLink());
-                    showToast(state.currentLanguage === 'en' ? 'Copied!' : 'Скопировано!');
+                    showToast('Copied!');
                 });
                 
                 document.getElementById('shareLinkBtn').addEventListener('click', () => {
-                    const text = encodeURIComponent(state.currentLanguage === 'en' 
-                        ? 'Join RefTON and earn crypto with referrals! 🚀' 
-                        : 'Присоединяйся к RefTON и зарабатывай крипту с рефералами! 🚀');
+                    const text = encodeURIComponent('Join RefTON and earn crypto with referrals! 🚀');
                     const url = encodeURIComponent(getReferralLink());
                     window.open(`https://t.me/share/url?url=${url}&text=${text}`);
                 });
                 
-                // ===== ВЫБОР ЯЗЫКА (работает!) =====
-                document.getElementById('langEn').addEventListener('click', () => {
-                    applyLanguage('en');
-                    state.user.language = 'en';
-                    saveToFirestore();
-                });
-                
-                document.getElementById('langRu').addEventListener('click', () => {
-                    applyLanguage('ru');
-                    state.user.language = 'ru';
-                    saveToFirestore();
-                });
-                
-                // Выбор языка в модалке
-                document.getElementById('selectEnglish').addEventListener('click', () => {
-                    applyLanguage('en');
-                    state.user.language = 'en';
-                    saveToFirestore();
-                    document.getElementById('languageModal').style.display = 'none';
-                });
-                
-                document.getElementById('selectRussian').addEventListener('click', () => {
-                    applyLanguage('ru');
-                    state.user.language = 'ru';
-                    saveToFirestore();
-                    document.getElementById('languageModal').style.display = 'none';
-                });
+                // Задания
+                document.getElementById('task1Btn').addEventListener('click', () => completeTask('task1'));
+                document.getElementById('task2Btn').addEventListener('click', () => completeTask('task2'));
+                document.getElementById('task3Btn').addEventListener('click', () => completeTask('task3'));
+                document.getElementById('task4Btn').addEventListener('click', () => completeTask('task4'));
+                document.getElementById('task5Btn').addEventListener('click', () => completeTask('task5'));
             }
             
             // ===== СТАРТ =====
@@ -947,4 +906,4 @@
         })();
     </script>
 </body>
-                        </html>
+</html>
