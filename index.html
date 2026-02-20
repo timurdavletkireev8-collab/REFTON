@@ -32,18 +32,15 @@
             flex-direction: column;
         }
         
-        /* ===== КРИПТО-СТИЛЬ ===== */
         .glass-card {
             background: rgba(20, 30, 50, 0.7);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(77, 126, 255, 0.3);
             border-radius: 24px;
             padding: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
         
-        /* ===== ШАПКА ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -65,7 +62,6 @@
         .logo span:first-child { color: #4D7EFF; text-shadow: 0 0 15px #4D7EFF; }
         .logo span:last-child { color: #00FFA3; text-shadow: 0 0 15px #00FFA3; }
         
-        /* ===== БОЛЬШОЙ БАЛАНС (как просил) ===== */
         .balance-big {
             background: rgba(20, 30, 50, 0.8);
             backdrop-filter: blur(15px);
@@ -100,7 +96,6 @@
             50% { text-shadow: 0 0 40px rgba(77, 126, 255, 0.8); }
         }
         
-        /* ===== НАВИГАЦИЯ (5 разделов) ===== */
         .nav-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -135,7 +130,6 @@
             margin-bottom: 4px;
         }
         
-        /* ===== РАЗДЕЛЫ ===== */
         .section {
             display: none;
             animation: fadeIn 0.3s ease;
@@ -150,7 +144,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* ===== КНОПКИ ===== */
         .refton-button {
             background: linear-gradient(135deg, #4D7EFF 0%, #00FFA3 100%);
             border: none;
@@ -181,7 +174,6 @@
             box-shadow: none;
         }
         
-        /* ===== ТАЙМЕР ===== */
         .cooldown-timer {
             display: flex;
             align-items: center;
@@ -196,7 +188,6 @@
             border: 1px solid #FFA500;
         }
         
-        /* ===== РАНГИ ===== */
         .rank-badge {
             display: inline-block;
             padding: 6px 16px;
@@ -219,7 +210,6 @@
         .rank-platinum { background: #2C3E50; color: #E5E4E2; }
         .rank-diamond { background: #0F4C81; color: #B9F2FF; }
         
-        /* ===== МОДАЛКА РАНГОВ ===== */
         .modal {
             position: fixed;
             top: 0;
@@ -253,7 +243,6 @@
             background: rgba(255,255,255,0.05);
         }
         
-        /* ===== РЕФЕРАЛЫ ===== */
         .referral-link-box {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(77, 126, 255, 0.3);
@@ -275,7 +264,6 @@
             border-bottom: none;
         }
         
-        /* ===== СПИСОК РЕФЕРАЛОВ ===== */
         .referral-list {
             max-height: 200px;
             overflow-y: auto;
@@ -295,18 +283,6 @@
             margin: 4px 0;
         }
         
-        .referral-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #4D7EFF, #00FFA3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-        
-        /* ===== ПРОФИЛЬ ===== */
         .profile-header {
             display: flex;
             align-items: center;
@@ -352,21 +328,17 @@
     </style>
 </head>
 <body>
-    <!-- ШАПКА (логотип слева) -->
     <div class="header">
         <div class="logo">
             <span>REF</span><span>TON</span>
         </div>
-        <!-- Пусто справа (баланс теперь внизу) -->
     </div>
     
-    <!-- БОЛЬШОЙ БАЛАНС (как просил) -->
     <div class="balance-big">
         <div class="balance-coins" id="balanceDisplay">0</div>
         <div class="balance-usd" id="usdDisplay">≈ $0.00 USD</div>
     </div>
     
-    <!-- НАВИГАЦИЯ (5 разделов) -->
     <div class="nav-grid">
         <div class="nav-item active" data-section="ads">
             <div class="nav-icon">📺</div>
@@ -390,9 +362,8 @@
         </div>
     </div>
     
-    <!-- КОНТЕЙНЕР РАЗДЕЛОВ -->
     <div class="section-container">
-        <!-- ===== ADS SECTION ===== -->
+        <!-- ADS SECTION -->
         <div id="adsSection" class="section active">
             <div class="glass-card">
                 <h3 style="margin-bottom: 20px; text-align: center;">📺 Watch & Earn</h3>
@@ -419,7 +390,7 @@
             </div>
         </div>
         
-        <!-- ===== TASKS SECTION ===== -->
+        <!-- TASKS SECTION -->
         <div id="tasksSection" class="section">
             <div class="glass-card">
                 <h3 style="margin-bottom: 20px; text-align: center;">📋 Tasks</h3>
@@ -430,7 +401,7 @@
             </div>
         </div>
         
-        <!-- ===== REFERRALS SECTION ===== -->
+        <!-- REFERRALS SECTION -->
         <div id="referralsSection" class="section">
             <div class="glass-card">
                 <h3 style="margin-bottom: 16px;">🔗 Your Referral Link</h3>
@@ -457,31 +428,27 @@
                     </div>
                 </div>
                 
-                <!-- СПИСОК РЕФЕРАЛОВ (КЛИКАБЕЛЬНЫЙ) -->
                 <div style="margin-top: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h4>👥 Your Referrals</h4>
                         <span style="color:#4D7EFF; cursor:pointer;" onclick="toggleReferralList()">Show all ▼</span>
                     </div>
-                    <div id="referralList" class="referral-list hidden">
-                        <!-- Сюда подгрузятся рефералы -->
-                    </div>
+                    <div id="referralList" class="referral-list hidden"></div>
                 </div>
             </div>
         </div>
         
-        <!-- ===== LEADERBOARD SECTION ===== -->
+        <!-- LEADERBOARD SECTION -->
         <div id="leaderboardSection" class="section">
             <div class="glass-card">
                 <h3 style="margin-bottom: 20px; text-align: center;">🏆 Top Referrers</h3>
                 <div id="leaderboardContent">
-                    <!-- Топ-10 будет подгружаться -->
                     <p style="text-align:center; color:#8E9AB0;">Loading...</p>
                 </div>
             </div>
         </div>
         
-        <!-- ===== PROFILE SECTION ===== -->
+        <!-- PROFILE SECTION -->
         <div id="profileSection" class="section">
             <div class="glass-card">
                 <div class="profile-header">
@@ -517,7 +484,6 @@
         </div>
     </div>
     
-    <!-- МОДАЛКА РАНГОВ -->
     <div id="ranksModal" class="modal hidden">
         <div class="modal-content">
             <h3 style="margin-bottom:20px; text-align:center;">🏆 Rank Requirements</h3>
@@ -530,12 +496,10 @@
         </div>
     </div>
     
-    <!-- TOAST -->
     <div id="toast" class="toast hidden"></div>
     
     <script>
         (function() {
-            // ===== FIREBASE =====
             const firebaseConfig = {
                 apiKey: "AIzaSyD2DVmirNOr3QYMTNmosl0SQYl_4fwTqfQ",
                 authDomain: "refton-352c8.firebaseapp.com",
@@ -548,7 +512,6 @@
             const app = firebase.initializeApp(firebaseConfig);
             const db = firebase.firestore();
             
-            // ===== TELEGRAM =====
             const Telegram = window.Telegram?.WebApp;
             if (Telegram) {
                 Telegram.ready();
@@ -562,16 +525,15 @@
                 photo_url: null
             };
             
-            const BOT_USERNAME = 'RefTON_USA_bot'; // ЗАМЕНИ
+            const BOT_USERNAME = 'RefTON_USA_bot'; // ЗАМЕНИ НА СВОЕГО
             const DAILY_LIMIT = 12;
             const COOLDOWN_SECONDS = 35;
             
             const REWARDED_ADS_BLOCK_ID = '23154';
             const TASK_ADS_BLOCK_ID = '23158';
             
-            const COIN_TO_USD = 0.001; // 1000 монет = $1
+            const COIN_TO_USD = 0.001;
             
-            // ===== СОСТОЯНИЕ =====
             let state = {
                 user: {
                     id: TG_USER.id.toString(),
@@ -579,9 +541,10 @@
                     username: TG_USER.username || '',
                     photoUrl: TG_USER.photo_url || null,
                     coins: 0,
-                    referralCode: `${TG_USER.id}_${Math.random().toString(36).substring(2, 8)}`,
+                    referralCode: '',
+                    referredBy: null,
                     referrals: {
-                        level1: [], // массив ID
+                        level1: [],
                         level2: [],
                         level3: []
                     },
@@ -596,25 +559,68 @@
                 timerInterval: null
             };
             
-            // ===== FIRESTORE =====
+            // ===== ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ =====
             async function loadUser() {
                 try {
                     const docRef = db.collection('users').doc(state.user.id);
                     const docSnap = await docRef.get();
                     
+                    // Генерируем referral code если его нет
+                    if (!state.user.referralCode) {
+                        state.user.referralCode = `${state.user.id}_${Math.random().toString(36).substring(2, 8)}`;
+                    }
+                    
+                    const startParam = Telegram?.initDataUnsafe?.start_param;
+                    
                     if (docSnap.exists) {
+                        // Пользователь существует - загружаем данные
                         const data = docSnap.data();
                         state.user = { ...state.user, ...data };
                         
-                        // Сброс daily
+                        // Проверяем daily сброс
                         const lastDate = localStorage.getItem('refton_lastDate');
                         const today = new Date().toDateString();
                         if (lastDate !== today) {
                             state.user.viewsToday = 0;
                             localStorage.setItem('refton_lastDate', today);
+                            await saveUser();
+                        }
+                        
+                        // Если есть реферальный код в URL и пользователь еще не привязан
+                        if (startParam && !state.user.referredBy) {
+                            await processReferral(state.user.id, startParam);
                         }
                     } else {
-                        await db.collection('users').doc(state.user.id).set(state.user);
+                        // Новый пользователь - создаем запись
+                        const newUser = {
+                            id: state.user.id,
+                            name: state.user.name,
+                            username: state.user.username,
+                            photoUrl: state.user.photoUrl,
+                            coins: 0,
+                            referralCode: state.user.referralCode,
+                            referredBy: null,
+                            referrals: {
+                                level1: [],
+                                level2: [],
+                                level3: []
+                            },
+                            rank: 'bronze',
+                            viewsToday: 0,
+                            totalViews: 0,
+                            totalEarned: 0,
+                            tasksCompleted: 0,
+                            joinDate: new Date().toISOString().split('T')[0],
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        await db.collection('users').doc(state.user.id).set(newUser);
+                        state.user = newUser;
+                        
+                        // Если пришел по реферальной ссылке
+                        if (startParam) {
+                            await processReferral(state.user.id, startParam);
+                        }
                     }
                     
                     updateUI();
@@ -623,9 +629,64 @@
                     
                 } catch (error) {
                     console.error('Firestore error:', error);
+                    showToast('Error loading data');
                 }
             }
             
+            // ===== ОБРАБОТКА РЕФЕРАЛОВ (3 УРОВНЯ) =====
+            async function processReferral(newUserId, referralCode) {
+                try {
+                    // Ищем пользователя с таким referralCode
+                    const usersRef = db.collection('users');
+                    const snapshot = await usersRef.where('referralCode', '==', referralCode).get();
+                    
+                    if (snapshot.empty) return;
+                    
+                    const referrerDoc = snapshot.docs[0];
+                    const referrerId = referrerDoc.id;
+                    const referrerData = referrerDoc.data();
+                    
+                    // Нельзя быть рефералом самого себя
+                    if (referrerId === newUserId) return;
+                    
+                    // Обновляем нового пользователя - записываем кто пригласил
+                    await db.collection('users').doc(newUserId).update({
+                        referredBy: referrerId
+                    });
+                    state.user.referredBy = referrerId;
+                    
+                    // Обновляем level1 у реферера
+                    await db.collection('users').doc(referrerId).update({
+                        'referrals.level1': firebase.firestore.FieldValue.arrayUnion(newUserId)
+                    });
+                    
+                    // Level 2 (реферер реферера)
+                    if (referrerData.referredBy) {
+                        const level2Id = referrerData.referredBy;
+                        await db.collection('users').doc(level2Id).update({
+                            'referrals.level2': firebase.firestore.FieldValue.arrayUnion(newUserId)
+                        });
+                        
+                        // Level 3 (реферер level2)
+                        const level2Doc = await db.collection('users').doc(level2Id).get();
+                        const level2Data = level2Doc.data();
+                        
+                        if (level2Data.referredBy) {
+                            const level3Id = level2Data.referredBy;
+                            await db.collection('users').doc(level3Id).update({
+                                'referrals.level3': firebase.firestore.FieldValue.arrayUnion(newUserId)
+                            });
+                        }
+                    }
+                    
+                    showToast('🎉 Welcome! Referred by someone');
+                    
+                } catch (error) {
+                    console.error('Referral error:', error);
+                }
+            }
+            
+            // ===== СОХРАНЕНИЕ ПОЛЬЗОВАТЕЛЯ =====
             async function saveUser() {
                 try {
                     await db.collection('users').doc(state.user.id).set({
@@ -637,7 +698,7 @@
                 }
             }
             
-            // ===== РАНГ =====
+            // ===== РАСЧЕТ РАНГА =====
             function calculateRank(referralsCount) {
                 if (referralsCount >= 100) return 'diamond';
                 if (referralsCount >= 50) return 'platinum';
@@ -646,7 +707,7 @@
                 return 'bronze';
             }
             
-            // ===== ADS =====
+            // ===== РЕКЛАМА =====
             async function watchAd() {
                 if (state.cooldown > 0) {
                     showToast(`Wait ${state.cooldown}s`);
@@ -709,7 +770,7 @@
                 }
             }
             
-            // ===== DAILY BONUS =====
+            // ===== ЕЖЕДНЕВНЫЙ БОНУС =====
             async function dailyBonus() {
                 const last = localStorage.getItem('lastBonus');
                 const today = new Date().toDateString();
@@ -726,7 +787,7 @@
                 showToast('+50 bonus!');
             }
             
-            // ===== TASKS =====
+            // ===== ЗАДАНИЯ =====
             async function showTaskAd() {
                 try {
                     const taskAd = window.Adsgram.init({ blockId: TASK_ADS_BLOCK_ID });
@@ -745,28 +806,41 @@
                 }
             }
             
-            // ===== REFERRAL =====
+            // ===== РЕФЕРАЛЬНАЯ ССЫЛКА =====
             function getReferralLink() {
                 return `https://t.me/${BOT_USERNAME}?start=${state.user.referralCode}`;
             }
             
+            // ===== ЗАГРУЗКА СПИСКА РЕФЕРАЛОВ =====
             async function loadReferralList() {
-                // Заглушка - в реальности грузить из базы
                 const listDiv = document.getElementById('referralList');
                 listDiv.innerHTML = '';
                 
-                for (let id of state.user.referrals.level1.slice(0, 5)) {
-                    const item = document.createElement('div');
-                    item.className = 'referral-item';
-                    item.innerHTML = `
-                        <div class="referral-avatar">👤</div>
-                        <div>User ${id.slice(-4)}</div>
-                    `;
-                    listDiv.appendChild(item);
+                if (state.user.referrals.level1.length === 0) {
+                    listDiv.innerHTML = '<p style="text-align:center; color:#8E9AB0;">No referrals yet</p>';
+                    return;
+                }
+                
+                for (let id of state.user.referrals.level1) {
+                    try {
+                        const userDoc = await db.collection('users').doc(id).get();
+                        if (userDoc.exists) {
+                            const data = userDoc.data();
+                            const item = document.createElement('div');
+                            item.className = 'referral-item';
+                            item.innerHTML = `
+                                <div class="profile-photo" style="width:32px; height:32px; font-size:16px;">👤</div>
+                                <div>${data.name || 'User'}</div>
+                            `;
+                            listDiv.appendChild(item);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             }
             
-            // ===== LEADERBOARD =====
+            // ===== ТАБЛИЦА ЛИДЕРОВ =====
             async function loadLeaderboard() {
                 try {
                     const snapshot = await db.collection('users')
@@ -776,6 +850,11 @@
                     
                     const content = document.getElementById('leaderboardContent');
                     content.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        content.innerHTML = '<p style="text-align:center; color:#8E9AB0;">No data yet</p>';
+                        return;
+                    }
                     
                     snapshot.forEach((doc, i) => {
                         const data = doc.data();
@@ -798,37 +877,19 @@
                 }
             }
             
-            // ===== MODALS =====
-            window.showRanksModal = function() {
-                document.getElementById('ranksModal').classList.remove('hidden');
-            };
-            
-            window.hideRanksModal = function() {
-                document.getElementById('ranksModal').classList.add('hidden');
-            };
-            
-            window.toggleReferralList = function() {
-                const list = document.getElementById('referralList');
-                list.classList.toggle('hidden');
-            };
-            
             // ===== UI =====
             function updateUI() {
-                // Big balance
                 document.getElementById('balanceDisplay').textContent = state.user.coins;
                 const usd = (state.user.coins * COIN_TO_USD).toFixed(2);
                 document.getElementById('usdDisplay').textContent = `≈ $${usd} USD`;
                 
-                // ADS
                 document.getElementById('dailyViews').textContent = state.user.viewsToday;
                 
-                // Referrals
                 document.getElementById('level1Count').textContent = state.user.referrals.level1.length;
                 document.getElementById('level2Count').textContent = state.user.referrals.level2.length;
                 document.getElementById('level3Count').textContent = state.user.referrals.level3.length;
                 document.getElementById('referralLink').textContent = getReferralLink();
                 
-                // Profile
                 document.getElementById('profileName').textContent = state.user.name;
                 document.getElementById('profileId').textContent = `ID: ${state.user.id.slice(0,8)}...`;
                 document.getElementById('profileTotalEarned').textContent = state.user.totalEarned;
@@ -852,7 +913,21 @@
                 setTimeout(() => toast.classList.add('hidden'), 2000);
             }
             
-            // ===== NAVIGATION =====
+            // ===== MODALS =====
+            window.showRanksModal = function() {
+                document.getElementById('ranksModal').classList.remove('hidden');
+            };
+            
+            window.hideRanksModal = function() {
+                document.getElementById('ranksModal').classList.add('hidden');
+            };
+            
+            window.toggleReferralList = function() {
+                const list = document.getElementById('referralList');
+                list.classList.toggle('hidden');
+            };
+            
+            // ===== НАВИГАЦИЯ =====
             function setupListeners() {
                 document.querySelectorAll('.nav-item').forEach(item => {
                     item.addEventListener('click', () => {
@@ -875,13 +950,13 @@
                 });
                 
                 document.getElementById('shareLinkBtn').addEventListener('click', () => {
-                    const text = encodeURIComponent('Join RefTON! 🚀');
+                    const text = encodeURIComponent('Join RefTON and earn crypto with referrals! 🚀');
                     const url = encodeURIComponent(getReferralLink());
                     window.open(`https://t.me/share/url?url=${url}&text=${text}`);
                 });
             }
             
-            // ===== START =====
+            // ===== СТАРТ =====
             loadUser();
             setupListeners();
         })();
