@@ -72,9 +72,18 @@
         .miniBalance span:last-child {
             color: #A0A7B5;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Большой баланс */
+        .miniBalance span:last-child img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0) invert(0.7);
+        }
+
+        /* Большой баланс (обновлён для TON) */
         .balanceBlock {
             text-align: center;
             margin: 16px 0 48px;
@@ -86,14 +95,33 @@
             line-height: 1;
             margin-bottom: 8px;
             color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .balanceUsd {
+        .balanceBig img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .balanceTon {
             font-size: 18px;
             color: #8E959F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        /* Навигация снизу */
+        .balanceTon img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(0.7);
+        }
+
+        /* Навигация */
         .navBar {
             display: flex;
             justify-content: space-around;
@@ -139,7 +167,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* Контейнер разделов */
+        /* Разделы */
         .sectionContainer {
             flex: 1;
             display: flex;
@@ -205,9 +233,6 @@
             background: transparent;
             border: 1.5px solid #2C3138;
             color: #A0A7B5;
-        }
-
-        .buttonOutline {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -297,7 +322,7 @@
             cursor: pointer;
         }
 
-        /* Бейдж реферала */
+        /* Бейдж реферала (теперь с картинками) */
         .levelBadge {
             width: 40px;
             height: 40px;
@@ -305,13 +330,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
             background: #2C3138;
         }
 
-        .levelBadge.level1 { background: #4D7EFF; }
-        .levelBadge.level2 { background: #00FFA3; color: #000000; }
-        .levelBadge.level3 { background: #FFD700; color: #000000; }
+        .levelBadge img {
+            width: 30px;
+            height: 30px;
+        }
 
         /* Ссылка */
         .refLink {
@@ -363,19 +388,28 @@
 </head>
 <body>
     <div class="app">
-        <!-- Шапка -->
+        <!-- Шапка (с иконкой TON в мини-балансе) -->
         <div class="header">
             <div class="logo">REF TON</div>
             <div class="miniBalance">
                 <span id="miniCoins">0</span>
-                <span id="miniUsd">$0</span>
+                <span id="miniUsd">
+                    <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
+                    <span id="miniTon">0</span>
+                </span>
             </div>
         </div>
 
-        <!-- Большой баланс -->
+        <!-- Большой баланс (теперь в TON) -->
         <div class="balanceBlock">
-            <div class="balanceBig" id="bigCoins">0</div>
-            <div class="balanceUsd" id="bigUsd">≈ $0.00 USD</div>
+            <div class="balanceBig">
+                <span id="bigCoins">0</span>
+                <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
+            </div>
+            <div class="balanceTon">
+                <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
+                ≈ <span id="bigTon">0</span> TON
+            </div>
         </div>
 
         <!-- Навигация -->
@@ -404,7 +438,7 @@
 
         <!-- Разделы -->
         <div class="sectionContainer">
-            <!-- ADS -->
+            <!-- ADS (с новой иконкой playback) -->
             <div id="adsSection" class="section active">
                 <div class="card">
                     <div class="cardTitle">daily stats</div>
@@ -423,13 +457,13 @@
                         ⏱️ <span id="timerSeconds">0</span>s
                     </div>
 
-                    <!-- Кнопка Watch Ad с rewind.png -->
+                    <!-- Watch Ad с playback.png -->
                     <button class="button" id="watchAdBtn">
-                        <img src="https://i.postimg.cc/7LDLPzrl/rewind.png" alt="watch">
+                        <img src="https://i.postimg.cc/NGTm06JY/playback.png" alt="watch">
                         watch ad — 100 coins
                     </button>
 
-                    <!-- Кнопка Daily Bonus с gift.png -->
+                    <!-- Daily Bonus с gift.png -->
                     <button class="button buttonOutline" id="dailyBonusBtn">
                         <img src="https://i.postimg.cc/d1NQ9xVt/gift.png" alt="bonus">
                         daily bonus +50
@@ -446,14 +480,16 @@
                 </div>
             </div>
 
-            <!-- REF -->
+            <!-- REF (с новыми иконками для уровней) -->
             <div id="refSection" class="section">
                 <div class="card">
                     <div class="cardTitle">referral levels</div>
                     
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level1">1</div>
+                            <div class="levelBadge level1">
+                                <img src="https://i.postimg.cc/jjmnx2yj/sign-1.png" alt="level1">
+                            </div>
                             <span class="statsLabel">level 1 (20%)</span>
                         </div>
                         <span class="statsValue" id="level1">0</span>
@@ -461,7 +497,9 @@
 
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level2">2</div>
+                            <div class="levelBadge level2">
+                                <img src="https://i.postimg.cc/PfmvHtJD/sign-2.png" alt="level2">
+                            </div>
                             <span class="statsLabel">level 2 (10%)</span>
                         </div>
                         <span class="statsValue" id="level2">0</span>
@@ -469,7 +507,9 @@
 
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level3">3</div>
+                            <div class="levelBadge level3">
+                                <img src="https://i.postimg.cc/02n66cpx/sign.png" alt="level3">
+                            </div>
                             <span class="statsLabel">level 3 (5%)</span>
                         </div>
                         <span class="statsValue" id="level3">0</span>
@@ -478,12 +518,12 @@
                     <div class="refLink" id="refLink">loading...</div>
 
                     <div style="display: flex; gap: 8px;">
-                        <!-- Кнопка Copy с note.png -->
+                        <!-- Copy с note.png -->
                         <button class="button buttonOutline" style="flex:1;" id="copyBtn">
                             <img src="https://i.postimg.cc/tRfCZwch/note.png" alt="copy" style="width: 18px; height: 18px;">
                             copy
                         </button>
-                        <!-- Кнопка Share с next.png -->
+                        <!-- Share с next.png -->
                         <button class="button buttonOutline" style="flex:1;" id="shareBtn">
                             <img src="https://i.postimg.cc/4xvJ0dxp/next.png" alt="share" style="width: 18px; height: 18px;">
                             share
@@ -568,7 +608,7 @@
         const TASK_ID = '23158';
         const DAILY_LIMIT = 12;
         const COOLDOWN = 35;
-        const COIN_TO_USD = 0.001;
+        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON (примерный курс)
 
         // ===== STATE =====
         let state = {
@@ -708,13 +748,14 @@
             else state.user.rank = 'bronze';
         }
 
-        // ===== UI =====
+        // ===== UI (обновлён для TON) =====
         function updateUI() {
             document.getElementById('bigCoins').textContent = state.user.coins;
             document.getElementById('miniCoins').textContent = state.user.coins;
-            const usd = (state.user.coins * COIN_TO_USD).toFixed(2);
-            document.getElementById('bigUsd').textContent = `≈ $${usd} USD`;
-            document.getElementById('miniUsd').textContent = `$${usd}`;
+            
+            const tonValue = (state.user.coins * COIN_TO_TON).toFixed(4);
+            document.getElementById('bigTon').textContent = tonValue;
+            document.getElementById('miniTon').textContent = tonValue;
 
             document.getElementById('todayViews').textContent = state.user.viewsToday;
             document.getElementById('tasksDone').textContent = state.user.tasksDone;
