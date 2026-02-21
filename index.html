@@ -83,7 +83,7 @@
             filter: brightness(0) invert(0.7);
         }
 
-        /* Большой баланс (обновлён для TON) */
+        /* Большой баланс (исправлен порядок) */
         .balanceBlock {
             text-align: center;
             margin: 16px 0 48px;
@@ -322,7 +322,7 @@
             cursor: pointer;
         }
 
-        /* Бейдж реферала (теперь с картинками) */
+        /* Бейдж реферала */
         .levelBadge {
             width: 40px;
             height: 40px;
@@ -388,7 +388,7 @@
 </head>
 <body>
     <div class="app">
-        <!-- Шапка (с иконкой TON в мини-балансе) -->
+        <!-- Шапка -->
         <div class="header">
             <div class="logo">REF TON</div>
             <div class="miniBalance">
@@ -400,11 +400,11 @@
             </div>
         </div>
 
-        <!-- Большой баланс (теперь в TON) -->
+        <!-- Большой баланс (иконка теперь слева от цифры) -->
         <div class="balanceBlock">
             <div class="balanceBig">
-                <span id="bigCoins">0</span>
                 <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
+                <span id="bigCoins">0</span>
             </div>
             <div class="balanceTon">
                 <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
@@ -438,7 +438,7 @@
 
         <!-- Разделы -->
         <div class="sectionContainer">
-            <!-- ADS (с новой иконкой playback) -->
+            <!-- ADS -->
             <div id="adsSection" class="section active">
                 <div class="card">
                     <div class="cardTitle">daily stats</div>
@@ -480,7 +480,7 @@
                 </div>
             </div>
 
-            <!-- REF (с новыми иконками для уровней) -->
+            <!-- REF -->
             <div id="refSection" class="section">
                 <div class="card">
                     <div class="cardTitle">referral levels</div>
@@ -608,7 +608,7 @@
         const TASK_ID = '23158';
         const DAILY_LIMIT = 12;
         const COOLDOWN = 35;
-        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON (примерный курс)
+        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON
 
         // ===== STATE =====
         let state = {
