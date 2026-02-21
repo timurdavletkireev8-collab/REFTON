@@ -121,15 +121,13 @@
             color: #FFFFFF;
         }
 
-        .navItem.active img {
-            filter: brightness(0) saturate(100%) invert(48%) sepia(98%) saturate(1917%) hue-rotate(210deg) brightness(101%) contrast(101%);
+        .navItem.active .navIconImg {
             opacity: 1;
         }
 
         .navIconImg {
             width: 24px;
             height: 24px;
-            filter: brightness(0) invert(1);
             opacity: 0.8;
             transition: 0.2s;
         }
@@ -364,7 +362,7 @@
             <div class="balanceUsd" id="bigUsd">≈ $0.00 USD</div>
         </div>
 
-        <!-- НАВИГАЦИЯ С ТВОИМИ НОВЫМИ ИКОНКАМИ -->
+        <!-- НАВИГАЦИЯ С ТВОИМИ НОВЫМИ ИКОНКАМИ (без фильтров) -->
         <div class="navBar">
             <!-- ADS (1 фото) -->
             <div class="navItem active" data-section="ads">
