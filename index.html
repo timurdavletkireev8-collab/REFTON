@@ -18,11 +18,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            background: #000000;
+            background: #0A0C10;
             color: #FFFFFF;
             min-height: 100vh;
             display: flex;
@@ -32,65 +32,67 @@
 
         .app {
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             padding: 20px 16px 24px;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: #0B0E12;
+            background: #0A0C10;
         }
 
-        /* Шапка */
+        /* Шапка — минималистичная */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
 
         .logo {
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
             color: #FFFFFF;
             opacity: 0.9;
         }
 
         .miniBalance {
-            background: #1C2128;
-            padding: 8px 14px;
+            background: #1E1E1E;
+            padding: 6px 12px;
             border-radius: 40px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
+            border: 1px solid #2A2A2A;
         }
 
         .miniBalance span:first-child {
-            font-weight: 500;
+            font-weight: 400;
+            color: #FFFFFF;
         }
 
         .miniBalance span:last-child {
-            color: #A0A7B5;
-            font-size: 14px;
+            color: #888888;
         }
 
-        /* Большой баланс — БЕЗ ИКОНКИ сверху */
+        /* Большой баланс — чистый и понятный */
         .balanceBlock {
             text-align: center;
-            margin: 16px 0 48px;
+            margin: 0 0 50px 0;
         }
 
         .balanceBig {
-            font-size: 64px;
-            font-weight: 600;
+            font-size: 72px;
+            font-weight: 500;
             line-height: 1;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: #FFFFFF;
         }
 
         .balanceTon {
-            font-size: 18px;
-            color: #8E959F;
+            font-size: 16px;
+            color: #888888;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -98,19 +100,22 @@
         }
 
         .balanceTon img {
-            width: 20px;
-            height: 20px;
-            filter: brightness(0) invert(0.7);
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
         }
 
-        /* Навигация */
+        /* Навигация — элегантная, полупрозрачная */
         .navBar {
             display: flex;
             justify-content: space-around;
-            background: #151A21;
-            padding: 8px;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 6px;
             border-radius: 40px;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .navItem {
@@ -118,16 +123,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             padding: 8px 4px;
             border-radius: 32px;
-            color: #8E959F;
+            color: #888888;
             transition: 0.2s;
             cursor: pointer;
         }
 
         .navItem.active {
-            background: #2C3138;
+            background: #2A2A2A;
             color: #FFFFFF;
         }
 
@@ -136,20 +141,20 @@
         }
 
         .navIconImg {
-            width: 24px;
-            height: 24px;
-            opacity: 0.8;
+            width: 22px;
+            height: 22px;
+            opacity: 0.6;
             transition: 0.2s;
         }
 
         .navLabel {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
-        /* Разделы */
+        /* Контейнер разделов — минималистичный */
         .sectionContainer {
             flex: 1;
             display: flex;
@@ -166,35 +171,35 @@
         }
 
         @keyframes fade {
-            from { opacity: 0.5; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0.5; }
+            to { opacity: 1; }
         }
 
-        /* Карточки */
+        /* Карточки разделов — легкие, без лишнего */
         .card {
-            background: #151A21;
-            border-radius: 32px;
-            padding: 28px 20px;
-            margin-bottom: 16px;
+            background: #0F0F0F;
+            border-radius: 28px;
+            padding: 30px 24px;
+            border: 1px solid #1A1A1A;
         }
 
         .cardTitle {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 500;
-            color: #8E959F;
+            color: #666666;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        /* Кнопки */
+        /* Кнопки — чистые, без тяжелых градиентов */
         .button {
-            background: #2C3138;
-            border: none;
+            background: #1A1A1A;
+            border: 1px solid #2A2A2A;
             border-radius: 60px;
-            padding: 18px 24px;
-            font-size: 16px;
-            font-weight: 500;
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 400;
             color: #FFFFFF;
             width: 100%;
             cursor: pointer;
@@ -207,32 +212,28 @@
         }
 
         .button:active {
-            background: #3A404A;
-            transform: scale(0.98);
+            background: #222222;
         }
 
         .buttonOutline {
             background: transparent;
-            border: 1.5px solid #2C3138;
-            color: #A0A7B5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            border: 1px solid #2A2A2A;
+            color: #888888;
         }
 
         .button img, .buttonOutline img {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
         }
 
-        /* Статистика */
+        /* Статистика — чистые строки */
         .statsRow {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 0;
-            border-bottom: 1px solid #252A31;
+            border-bottom: 1px solid #1A1A1A;
         }
 
         .statsRow:last-child {
@@ -240,33 +241,34 @@
         }
 
         .statsValue {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 400;
             color: #FFFFFF;
         }
 
         .statsLabel {
-            color: #8E959F;
-            font-size: 15px;
+            color: #666666;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        /* Бейдж реферала — исправлено соответствие картинок */
+        /* Бейджи рефералов — минималистичные */
         .levelBadge {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #2C3138;
+            background: #1A1A1A;
         }
 
         .levelBadge img {
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
+            opacity: 0.9;
         }
 
         /* Таблица лидеров */
@@ -276,63 +278,67 @@
             gap: 16px;
             padding: 16px;
             border-radius: 20px;
-            background: #1C2128;
+            background: #0F0F0F;
             margin-bottom: 8px;
+            border: 1px solid #1A1A1A;
         }
 
         .rank {
             width: 32px;
             height: 32px;
-            background: #2C3138;
-            border-radius: 20px;
+            background: #1A1A1A;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            font-weight: 400;
             color: #FFFFFF;
         }
 
         /* Профиль */
         .avatar {
-            width: 80px;
-            height: 80px;
-            background: #2C3138;
-            border-radius: 40px;
+            width: 70px;
+            height: 70px;
+            background: #1A1A1A;
+            border-radius: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 20px;
+            font-size: 36px;
+            margin: 0 auto 16px;
+            border: 1px solid #2A2A2A;
         }
 
         .profileName {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 500;
             text-align: center;
             margin-bottom: 8px;
         }
 
         .profileRank {
-            background: #1C2128;
-            padding: 8px 20px;
+            background: #1A1A1A;
+            padding: 6px 18px;
             border-radius: 40px;
             display: inline-block;
             margin: 0 auto 24px;
             color: #FFFFFF;
-            font-weight: 500;
+            font-weight: 400;
+            font-size: 14px;
             cursor: pointer;
+            border: 1px solid #2A2A2A;
         }
 
         /* Ссылка */
         .refLink {
-            background: #1C2128;
-            border: 1px solid #252A31;
+            background: #0F0F0F;
+            border: 1px solid #2A2A2A;
             border-radius: 16px;
             padding: 14px;
             font-size: 13px;
             word-break: break-all;
             margin: 20px 0;
-            color: #A0A7B5;
+            color: #888888;
         }
 
         .hidden { display: none; }
@@ -342,56 +348,57 @@
             bottom: 100px;
             left: 20px;
             right: 20px;
-            max-width: 380px;
+            max-width: 360px;
             margin: 0 auto;
-            background: #1C2128;
-            border: 1px solid #2C3138;
+            background: #1A1A1A;
+            border: 1px solid #2A2A2A;
             border-radius: 60px;
-            padding: 16px;
+            padding: 14px;
             text-align: center;
             color: #FFFFFF;
-            font-weight: 500;
+            font-weight: 400;
             z-index: 1000;
             animation: slide 0.2s ease;
         }
 
         @keyframes slide {
-            from { transform: translateY(50px); opacity: 0; }
+            from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
         .cooldown {
-            background: #1C2128;
+            background: #0F0F0F;
             border: 1px solid #FFA500;
             color: #FFA500;
             border-radius: 60px;
             padding: 12px;
             text-align: center;
             margin: 16px 0;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Шапка -->
+        <!-- Шапка минимальная -->
         <div class="header">
             <div class="logo">REF TON</div>
             <div class="miniBalance">
                 <span id="miniCoins">0</span>
-                <span id="miniUsd">0 TON</span>
+                <span id="miniUsd">≈ 0 TON</span>
             </div>
         </div>
 
-        <!-- Большой баланс: сверху просто число, снизу ≈ и иконка TON -->
+        <!-- Большой баланс — чистое число -->
         <div class="balanceBlock">
             <div class="balanceBig" id="bigCoins">0</div>
             <div class="balanceTon">
-                ≈ <span id="bigTon">0</span>
+                ≈ <span id="bigTon">0.0000</span>
                 <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
             </div>
         </div>
 
-        <!-- Навигация (твои иконки разделов) -->
+        <!-- Навигация — элегантная снизу -->
         <div class="navBar">
             <div class="navItem active" data-section="ads">
                 <img src="https://i.postimg.cc/ZnmB1ghx/ads-1.png" class="navIconImg" alt="ads">
@@ -417,11 +424,11 @@
 
         <!-- Разделы -->
         <div class="sectionContainer">
-            <!-- ADS (реклама) -->
+            <!-- ADS -->
             <div id="adsSection" class="section active">
                 <div class="card">
                     <div class="cardTitle">daily stats</div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 32px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
                         <div>
                             <div class="statsValue" id="todayViews">0</div>
                             <div class="statsLabel">today</div>
@@ -438,45 +445,45 @@
 
                     <button class="button" id="watchAdBtn">
                         <img src="https://i.postimg.cc/7LDLPzrl/rewind.png" alt="watch">
-                        watch ad — 100 coins
+                        watch ad — 100
                     </button>
 
                     <button class="button buttonOutline" id="dailyBonusBtn">
                         <img src="https://i.postimg.cc/d1NQ9xVt/gift.png" alt="bonus">
-                        daily bonus +50
+                        daily +50
                     </button>
                 </div>
             </div>
 
-            <!-- TASKS (задания) -->
+            <!-- TASKS -->
             <div id="tasksSection" class="section">
                 <div class="card">
                     <div class="cardTitle">completed</div>
                     <div class="statsValue" style="font-size: 56px; margin-bottom: 24px;" id="tasksDone">0</div>
-                    <button class="button" id="taskBtn">🚀 get new task</button>
+                    <button class="button" id="taskBtn">get new task</button>
                 </div>
             </div>
 
-            <!-- REF (рефералы) — ИСПРАВЛЕНО: картинки на своих местах -->
+            <!-- REF — картинки поменяны местами -->
             <div id="refSection" class="section">
                 <div class="card">
                     <div class="cardTitle">referral levels</div>
                     
-                    <!-- Level 1 — картинка 1 (sign-1.png) вместо цифры 1 -->
+                    <!-- Level 1 — теперь картинка sign.png -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level1">
-                                <img src="https://i.postimg.cc/jjmnx2yj/sign-1.png" alt="level 1">
+                            <div class="levelBadge">
+                                <img src="https://i.postimg.cc/02n66cpx/sign.png" alt="level 1">
                             </div>
                             <span class="statsLabel">level 1 (20%)</span>
                         </div>
                         <span class="statsValue" id="level1">0</span>
                     </div>
 
-                    <!-- Level 2 — картинка 2 (sign-2.png) вместо цифры 2 -->
+                    <!-- Level 2 — картинка sign-2.png (без изменений) -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level2">
+                            <div class="levelBadge">
                                 <img src="https://i.postimg.cc/PfmvHtJD/sign-2.png" alt="level 2">
                             </div>
                             <span class="statsLabel">level 2 (10%)</span>
@@ -484,11 +491,11 @@
                         <span class="statsValue" id="level2">0</span>
                     </div>
 
-                    <!-- Level 3 — картинка 3 (sign.png) вместо цифры 3 -->
+                    <!-- Level 3 — теперь картинка sign-1.png -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div class="levelBadge level3">
-                                <img src="https://i.postimg.cc/02n66cpx/sign.png" alt="level 3">
+                            <div class="levelBadge">
+                                <img src="https://i.postimg.cc/jjmnx2yj/sign-1.png" alt="level 3">
                             </div>
                             <span class="statsLabel">level 3 (5%)</span>
                         </div>
@@ -499,18 +506,18 @@
 
                     <div style="display: flex; gap: 8px;">
                         <button class="button buttonOutline" style="flex:1;" id="copyBtn">
-                            <img src="https://i.postimg.cc/tRfCZwch/note.png" alt="copy" style="width: 18px; height: 18px;">
+                            <img src="https://i.postimg.cc/tRfCZwch/note.png" alt="copy" style="width: 16px;">
                             copy
                         </button>
                         <button class="button buttonOutline" style="flex:1;" id="shareBtn">
-                            <img src="https://i.postimg.cc/4xvJ0dxp/next.png" alt="share" style="width: 18px; height: 18px;">
+                            <img src="https://i.postimg.cc/4xvJ0dxp/next.png" alt="share" style="width: 16px;">
                             share
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- TOP (лидеры) -->
+            <!-- TOP -->
             <div id="topSection" class="section">
                 <div class="card">
                     <div class="cardTitle">top referrers</div>
@@ -518,27 +525,27 @@
                 </div>
             </div>
 
-            <!-- PROFILE (профиль) -->
+            <!-- PROFILE -->
             <div id="profileSection" class="section">
                 <div class="card">
                     <div class="avatar" id="profileAvatar">👤</div>
                     <div class="profileName" id="profileName">User</div>
-                    <div class="profileRank" id="profileRank" onclick="showRanksModal()">bronze ▼</div>
+                    <div class="profileRank" id="profileRank" onclick="showRanksModal()">bronze</div>
 
                     <div class="statsRow">
                         <span class="statsLabel">total earned</span>
                         <span class="statsValue" id="totalEarned">0</span>
                     </div>
                     <div class="statsRow">
-                        <span class="statsLabel">total referrals</span>
+                        <span class="statsLabel">referrals</span>
                         <span class="statsValue" id="totalRefs">0</span>
                     </div>
                     <div class="statsRow">
-                        <span class="statsLabel">total views</span>
+                        <span class="statsLabel">views</span>
                         <span class="statsValue" id="totalViews">0</span>
                     </div>
                     <div class="statsRow">
-                        <span class="statsLabel">tasks done</span>
+                        <span class="statsLabel">tasks</span>
                         <span class="statsValue" id="totalTasks">0</span>
                     </div>
                 </div>
@@ -547,15 +554,15 @@
     </div>
 
     <!-- Модалка рангов -->
-    <div id="ranksModal" style="position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); backdrop-filter:blur(15px); display: none; align-items: center; justify-content: center; z-index:2000;" onclick="this.style.display='none'">
-        <div style="background:#151A21; border-radius: 32px; padding: 32px; max-width: 300px; width: 90%;">
-            <h3 style="margin-bottom:20px; text-align:center;">🏆 RANK REQUIREMENTS</h3>
-            <div style="display:flex; justify-content:space-between; padding:12px; background:#1C2128; border-radius:16px; margin:4px 0;"><span>Bronze</span><span>0-4</span></div>
-            <div style="display:flex; justify-content:space-between; padding:12px; background:#1C2128; border-radius:16px; margin:4px 0;"><span>Silver</span><span>5-19</span></div>
-            <div style="display:flex; justify-content:space-between; padding:12px; background:#1C2128; border-radius:16px; margin:4px 0;"><span>Gold</span><span>20-49</span></div>
-            <div style="display:flex; justify-content:space-between; padding:12px; background:#1C2128; border-radius:16px; margin:4px 0;"><span>Platinum</span><span>50-99</span></div>
-            <div style="display:flex; justify-content:space-between; padding:12px; background:#1C2128; border-radius:16px; margin:4px 0;"><span>Diamond</span><span>100+</span></div>
-            <button class="buttonOutline" style="margin-top:20px; width:100%;" onclick="document.getElementById('ranksModal').style.display='none'">CLOSE</button>
+    <div id="ranksModal" style="position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px); display: none; align-items: center; justify-content: center; z-index:2000;" onclick="this.style.display='none'">
+        <div style="background:#0F0F0F; border-radius: 28px; padding: 28px; max-width: 280px; width: 90%; border:1px solid #2A2A2A;">
+            <h3 style="margin-bottom:20px; text-align:center; font-weight:400;">rank requirements</h3>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:#1A1A1A; border-radius:16px; margin:4px 0;"><span>bronze</span><span>0-4</span></div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:#1A1A1A; border-radius:16px; margin:4px 0;"><span>silver</span><span>5-19</span></div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:#1A1A1A; border-radius:16px; margin:4px 0;"><span>gold</span><span>20-49</span></div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:#1A1A1A; border-radius:16px; margin:4px 0;"><span>platinum</span><span>50-99</span></div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:#1A1A1A; border-radius:16px; margin:4px 0;"><span>diamond</span><span>100+</span></div>
+            <button class="buttonOutline" style="margin-top:20px; width:100%;" onclick="document.getElementById('ranksModal').style.display='none'">close</button>
         </div>
     </div>
 
@@ -586,7 +593,7 @@
         const TASK_ID = '23158';
         const DAILY_LIMIT = 12;
         const COOLDOWN = 35;
-        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON (курс примерный)
+        const COIN_TO_TON = 0.00001;
 
         // ===== STATE =====
         let state = {
@@ -663,7 +670,7 @@
                 
                 await saveUser();
                 updateUI();
-                showToast('+100 coins');
+                showToast('+100');
                 startCooldown();
             } catch {
                 showToast('ad failed');
@@ -695,7 +702,7 @@
             localStorage.setItem('bonus', today);
             await saveUser();
             updateUI();
-            showToast('+50 bonus');
+            showToast('+50');
         }
 
         // ===== TASK =====
@@ -710,7 +717,7 @@
                 
                 await saveUser();
                 updateUI();
-                showToast(`+${reward} coins`);
+                showToast(`+${reward}`);
             } catch {
                 showToast('task failed');
             }
@@ -726,14 +733,14 @@
             else state.user.rank = 'bronze';
         }
 
-        // ===== UI (баланс: сверху число, снизу ≈ и TON) =====
+        // ===== UI =====
         function updateUI() {
             document.getElementById('bigCoins').textContent = state.user.coins;
             document.getElementById('miniCoins').textContent = state.user.coins;
             
             const tonValue = (state.user.coins * COIN_TO_TON).toFixed(4);
             document.getElementById('bigTon').textContent = tonValue;
-            document.getElementById('miniUsd').textContent = tonValue + ' TON';
+            document.getElementById('miniUsd').textContent = `≈ ${tonValue} TON`;
 
             document.getElementById('todayViews').textContent = state.user.viewsToday;
             document.getElementById('tasksDone').textContent = state.user.tasksDone;
@@ -744,7 +751,7 @@
             document.getElementById('refLink').textContent = `https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`;
 
             document.getElementById('profileName').textContent = state.user.name;
-            document.getElementById('profileRank').textContent = state.user.rank + ' ▼';
+            document.getElementById('profileRank').textContent = state.user.rank;
             document.getElementById('totalEarned').textContent = state.user.totalEarned;
             document.getElementById('totalRefs').textContent = state.user.referrals.l1.length;
             document.getElementById('totalViews').textContent = state.user.totalViews;
@@ -772,11 +779,11 @@
                         <div class="leaderItem">
                             <div class="rank">${i+1}</div>
                             <div style="flex:1">${data.name || 'User'}</div>
-                            <div style="font-weight:600">${data.totalEarned || 0}</div>
+                            <div style="font-weight:400">${data.totalEarned || 0}</div>
                         </div>
                     `);
                 });
-                document.getElementById('leaderboard').innerHTML = html.join('') || '<div class="statsLabel" style="text-align:center">no data</div>';
+                document.getElementById('leaderboard').innerHTML = html.join('') || '<div style="text-align:center; color:#666;">no data</div>';
             } catch (e) {
                 console.log(e);
             }
@@ -798,15 +805,15 @@
         document.getElementById('taskBtn').addEventListener('click', getTask);
         document.getElementById('copyBtn').addEventListener('click', () => {
             navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`);
-            showToast('copied!');
+            showToast('copied');
         });
         document.getElementById('shareBtn').addEventListener('click', () => {
-            const text = encodeURIComponent('join RefTON 🚀');
+            const text = encodeURIComponent('join RefTON');
             const url = encodeURIComponent(`https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`);
         });
 
-        // ===== МОДАЛКА РАНГОВ =====
+        // ===== МОДАЛКА =====
         window.showRanksModal = function() {
             document.getElementById('ranksModal').style.display = 'flex';
         };
