@@ -72,18 +72,9 @@
         .miniBalance span:last-child {
             color: #A0A7B5;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
-        .miniBalance span:last-child img {
-            width: 16px;
-            height: 16px;
-            filter: brightness(0) invert(0.7);
-        }
-
-        /* Большой баланс (исправлен порядок) */
+        /* Большой баланс — БЕЗ ИКОНКИ сверху */
         .balanceBlock {
             text-align: center;
             margin: 16px 0 48px;
@@ -95,15 +86,6 @@
             line-height: 1;
             margin-bottom: 8px;
             color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .balanceBig img {
-            width: 40px;
-            height: 40px;
         }
 
         .balanceTon {
@@ -266,6 +248,25 @@
         .statsLabel {
             color: #8E959F;
             font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Бейдж реферала — исправлено соответствие картинок */
+        .levelBadge {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2C3138;
+        }
+
+        .levelBadge img {
+            width: 30px;
+            height: 30px;
         }
 
         /* Таблица лидеров */
@@ -320,22 +321,6 @@
             color: #FFFFFF;
             font-weight: 500;
             cursor: pointer;
-        }
-
-        /* Бейдж реферала */
-        .levelBadge {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #2C3138;
-        }
-
-        .levelBadge img {
-            width: 30px;
-            height: 30px;
         }
 
         /* Ссылка */
@@ -393,26 +378,20 @@
             <div class="logo">REF TON</div>
             <div class="miniBalance">
                 <span id="miniCoins">0</span>
-                <span id="miniUsd">
-                    <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
-                    <span id="miniTon">0</span>
-                </span>
+                <span id="miniUsd">0 TON</span>
             </div>
         </div>
 
-        <!-- Большой баланс (иконка теперь слева от цифры) -->
+        <!-- Большой баланс: сверху просто число, снизу ≈ и иконка TON -->
         <div class="balanceBlock">
-            <div class="balanceBig">
-                <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
-                <span id="bigCoins">0</span>
-            </div>
+            <div class="balanceBig" id="bigCoins">0</div>
             <div class="balanceTon">
+                ≈ <span id="bigTon">0</span>
                 <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
-                ≈ <span id="bigTon">0</span> TON
             </div>
         </div>
 
-        <!-- Навигация -->
+        <!-- Навигация (твои иконки разделов) -->
         <div class="navBar">
             <div class="navItem active" data-section="ads">
                 <img src="https://i.postimg.cc/ZnmB1ghx/ads-1.png" class="navIconImg" alt="ads">
@@ -438,7 +417,7 @@
 
         <!-- Разделы -->
         <div class="sectionContainer">
-            <!-- ADS -->
+            <!-- ADS (реклама) -->
             <div id="adsSection" class="section active">
                 <div class="card">
                     <div class="cardTitle">daily stats</div>
@@ -457,13 +436,11 @@
                         ⏱️ <span id="timerSeconds">0</span>s
                     </div>
 
-                    <!-- Watch Ad с playback.png -->
                     <button class="button" id="watchAdBtn">
-                        <img src="https://i.postimg.cc/NGTm06JY/playback.png" alt="watch">
+                        <img src="https://i.postimg.cc/7LDLPzrl/rewind.png" alt="watch">
                         watch ad — 100 coins
                     </button>
 
-                    <!-- Daily Bonus с gift.png -->
                     <button class="button buttonOutline" id="dailyBonusBtn">
                         <img src="https://i.postimg.cc/d1NQ9xVt/gift.png" alt="bonus">
                         daily bonus +50
@@ -471,7 +448,7 @@
                 </div>
             </div>
 
-            <!-- TASKS -->
+            <!-- TASKS (задания) -->
             <div id="tasksSection" class="section">
                 <div class="card">
                     <div class="cardTitle">completed</div>
@@ -480,35 +457,38 @@
                 </div>
             </div>
 
-            <!-- REF -->
+            <!-- REF (рефералы) — ИСПРАВЛЕНО: картинки на своих местах -->
             <div id="refSection" class="section">
                 <div class="card">
                     <div class="cardTitle">referral levels</div>
                     
+                    <!-- Level 1 — картинка 1 (sign-1.png) вместо цифры 1 -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge level1">
-                                <img src="https://i.postimg.cc/jjmnx2yj/sign-1.png" alt="level1">
+                                <img src="https://i.postimg.cc/jjmnx2yj/sign-1.png" alt="level 1">
                             </div>
                             <span class="statsLabel">level 1 (20%)</span>
                         </div>
                         <span class="statsValue" id="level1">0</span>
                     </div>
 
+                    <!-- Level 2 — картинка 2 (sign-2.png) вместо цифры 2 -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge level2">
-                                <img src="https://i.postimg.cc/PfmvHtJD/sign-2.png" alt="level2">
+                                <img src="https://i.postimg.cc/PfmvHtJD/sign-2.png" alt="level 2">
                             </div>
                             <span class="statsLabel">level 2 (10%)</span>
                         </div>
                         <span class="statsValue" id="level2">0</span>
                     </div>
 
+                    <!-- Level 3 — картинка 3 (sign.png) вместо цифры 3 -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge level3">
-                                <img src="https://i.postimg.cc/02n66cpx/sign.png" alt="level3">
+                                <img src="https://i.postimg.cc/02n66cpx/sign.png" alt="level 3">
                             </div>
                             <span class="statsLabel">level 3 (5%)</span>
                         </div>
@@ -518,12 +498,10 @@
                     <div class="refLink" id="refLink">loading...</div>
 
                     <div style="display: flex; gap: 8px;">
-                        <!-- Copy с note.png -->
                         <button class="button buttonOutline" style="flex:1;" id="copyBtn">
                             <img src="https://i.postimg.cc/tRfCZwch/note.png" alt="copy" style="width: 18px; height: 18px;">
                             copy
                         </button>
-                        <!-- Share с next.png -->
                         <button class="button buttonOutline" style="flex:1;" id="shareBtn">
                             <img src="https://i.postimg.cc/4xvJ0dxp/next.png" alt="share" style="width: 18px; height: 18px;">
                             share
@@ -532,7 +510,7 @@
                 </div>
             </div>
 
-            <!-- TOP -->
+            <!-- TOP (лидеры) -->
             <div id="topSection" class="section">
                 <div class="card">
                     <div class="cardTitle">top referrers</div>
@@ -540,7 +518,7 @@
                 </div>
             </div>
 
-            <!-- PROFILE -->
+            <!-- PROFILE (профиль) -->
             <div id="profileSection" class="section">
                 <div class="card">
                     <div class="avatar" id="profileAvatar">👤</div>
@@ -608,7 +586,7 @@
         const TASK_ID = '23158';
         const DAILY_LIMIT = 12;
         const COOLDOWN = 35;
-        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON
+        const COIN_TO_TON = 0.00001; // 1 монета = 0.00001 TON (курс примерный)
 
         // ===== STATE =====
         let state = {
@@ -748,14 +726,14 @@
             else state.user.rank = 'bronze';
         }
 
-        // ===== UI (обновлён для TON) =====
+        // ===== UI (баланс: сверху число, снизу ≈ и TON) =====
         function updateUI() {
             document.getElementById('bigCoins').textContent = state.user.coins;
             document.getElementById('miniCoins').textContent = state.user.coins;
             
             const tonValue = (state.user.coins * COIN_TO_TON).toFixed(4);
             document.getElementById('bigTon').textContent = tonValue;
-            document.getElementById('miniTon').textContent = tonValue;
+            document.getElementById('miniUsd').textContent = tonValue + ' TON';
 
             document.getElementById('todayViews').textContent = state.user.viewsToday;
             document.getElementById('tasksDone').textContent = state.user.tasksDone;
