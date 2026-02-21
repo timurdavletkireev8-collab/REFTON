@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RefTON — earn with referrals</title>
     
-    <!-- Telegram & Adsgram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sdk.adsgram.ai/js/adsgram.min.js"></script>
-    
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
@@ -18,7 +15,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -33,66 +30,55 @@
         .app {
             width: 100%;
             max-width: 400px;
-            padding: 20px 16px 24px;
+            height: 100vh;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
             background: #0A0C10;
         }
 
-        /* Шапка — минималистичная */
+        /* Шапка */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .logo {
             font-size: 18px;
             font-weight: 500;
-            letter-spacing: 0.5px;
             color: #FFFFFF;
             opacity: 0.9;
         }
 
         .miniBalance {
-            background: #1E1E1E;
+            background: #1A1A1A;
             padding: 6px 12px;
             border-radius: 40px;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
             border: 1px solid #2A2A2A;
         }
 
-        .miniBalance span:first-child {
-            font-weight: 400;
-            color: #FFFFFF;
-        }
-
-        .miniBalance span:last-child {
-            color: #888888;
-        }
-
-        /* Большой баланс — чистый и понятный */
+        /* Большой баланс */
         .balanceBlock {
             text-align: center;
-            margin: 0 0 50px 0;
+            margin-bottom: 40px;
         }
 
         .balanceBig {
             font-size: 72px;
             font-weight: 500;
             line-height: 1;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #FFFFFF;
         }
 
         .balanceTon {
             font-size: 16px;
-            color: #888888;
+            color: #888;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -105,62 +91,16 @@
             opacity: 0.7;
         }
 
-        /* Навигация — элегантная, полупрозрачная */
-        .navBar {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(30, 30, 30, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 6px;
-            border-radius: 40px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .navItem {
+        /* Контейнер для контента - по центру */
+        .contentContainer {
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 4px;
-            border-radius: 32px;
-            color: #888888;
-            transition: 0.2s;
-            cursor: pointer;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
-        .navItem.active {
-            background: #2A2A2A;
-            color: #FFFFFF;
-        }
-
-        .navItem.active .navIconImg {
-            opacity: 1;
-        }
-
-        .navIconImg {
-            width: 22px;
-            height: 22px;
-            opacity: 0.6;
-            transition: 0.2s;
-        }
-
-        .navLabel {
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* Контейнер разделов — минималистичный */
-        .sectionContainer {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
+        /* Разделы */
         .section {
             display: none;
             animation: fade 0.2s ease;
@@ -175,7 +115,7 @@
             to { opacity: 1; }
         }
 
-        /* Карточки разделов — легкие, без лишнего */
+        /* Карточки разделов */
         .card {
             background: #0F0F0F;
             border-radius: 28px;
@@ -186,48 +126,45 @@
         .cardTitle {
             font-size: 13px;
             font-weight: 500;
-            color: #666666;
+            color: #666;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 30px;
         }
 
-        /* Кнопки — чистые, без тяжелых градиентов */
+        /* Кнопки */
         .button {
             background: #1A1A1A;
             border: 1px solid #2A2A2A;
             border-radius: 60px;
             padding: 16px 24px;
             font-size: 15px;
-            font-weight: 400;
             color: #FFFFFF;
             width: 100%;
             cursor: pointer;
-            transition: 0.15s;
             margin: 8px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .button:active {
-            background: #222222;
+            background: #222;
         }
 
         .buttonOutline {
             background: transparent;
             border: 1px solid #2A2A2A;
-            color: #888888;
+            color: #888;
         }
 
-        .button img, .buttonOutline img {
-            width: 18px;
-            height: 18px;
-            opacity: 0.7;
+        .button img {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
         }
 
-        /* Статистика — чистые строки */
+        /* Статистика */
         .statsRow {
             display: flex;
             justify-content: space-between;
@@ -247,14 +184,14 @@
         }
 
         .statsLabel {
-            color: #666666;
+            color: #666;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        /* Бейджи рефералов — минималистичные */
+        /* Бейджи рефералов */
         .levelBadge {
             width: 36px;
             height: 36px;
@@ -271,62 +208,49 @@
             opacity: 0.9;
         }
 
-        /* Таблица лидеров */
-        .leaderItem {
+        /* Навигация - СНИЗУ */
+        .navBar {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            border-radius: 20px;
-            background: #0F0F0F;
-            margin-bottom: 8px;
-            border: 1px solid #1A1A1A;
-        }
-
-        .rank {
-            width: 32px;
-            height: 32px;
-            background: #1A1A1A;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 400;
-            color: #FFFFFF;
-        }
-
-        /* Профиль */
-        .avatar {
-            width: 70px;
-            height: 70px;
-            background: #1A1A1A;
-            border-radius: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            margin: 0 auto 16px;
-            border: 1px solid #2A2A2A;
-        }
-
-        .profileName {
-            font-size: 22px;
-            font-weight: 500;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .profileRank {
-            background: #1A1A1A;
-            padding: 6px 18px;
+            justify-content: space-around;
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px;
             border-radius: 40px;
-            display: inline-block;
-            margin: 0 auto 24px;
-            color: #FFFFFF;
-            font-weight: 400;
-            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-top: auto;
+        }
+
+        .navItem {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 4px;
+            border-radius: 32px;
+            color: #888;
             cursor: pointer;
-            border: 1px solid #2A2A2A;
+        }
+
+        .navItem.active {
+            background: #2A2A2A;
+            color: #FFFFFF;
+        }
+
+        .navIconImg {
+            width: 22px;
+            height: 22px;
+            opacity: 0.6;
+        }
+
+        .navItem.active .navIconImg {
+            opacity: 1;
+        }
+
+        .navLabel {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
         }
 
         /* Ссылка */
@@ -338,7 +262,7 @@
             font-size: 13px;
             word-break: break-all;
             margin: 20px 0;
-            color: #888888;
+            color: #888;
         }
 
         .hidden { display: none; }
@@ -356,7 +280,6 @@
             padding: 14px;
             text-align: center;
             color: #FFFFFF;
-            font-weight: 400;
             z-index: 1000;
             animation: slide 0.2s ease;
         }
@@ -374,13 +297,12 @@
             padding: 12px;
             text-align: center;
             margin: 16px 0;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Шапка минимальная -->
+        <!-- Шапка -->
         <div class="header">
             <div class="logo">REF TON</div>
             <div class="miniBalance">
@@ -389,7 +311,7 @@
             </div>
         </div>
 
-        <!-- Большой баланс — чистое число -->
+        <!-- Большой баланс -->
         <div class="balanceBlock">
             <div class="balanceBig" id="bigCoins">0</div>
             <div class="balanceTon">
@@ -398,32 +320,8 @@
             </div>
         </div>
 
-        <!-- Навигация — элегантная снизу -->
-        <div class="navBar">
-            <div class="navItem active" data-section="ads">
-                <img src="https://i.postimg.cc/ZnmB1ghx/ads-1.png" class="navIconImg" alt="ads">
-                <span class="navLabel">ADS</span>
-            </div>
-            <div class="navItem" data-section="tasks">
-                <img src="https://i.postimg.cc/5NxQgZ3h/task.png" class="navIconImg" alt="tasks">
-                <span class="navLabel">TASKS</span>
-            </div>
-            <div class="navItem" data-section="ref">
-                <img src="https://i.postimg.cc/YqbGsbDY/referral-1.png" class="navIconImg" alt="referrals">
-                <span class="navLabel">REF</span>
-            </div>
-            <div class="navItem" data-section="top">
-                <img src="https://i.postimg.cc/g27wYrWc/trophy.png" class="navIconImg" alt="top">
-                <span class="navLabel">TOP</span>
-            </div>
-            <div class="navItem" data-section="profile">
-                <img src="https://i.postimg.cc/QtGHTPCn/profile.png" class="navIconImg" alt="profile">
-                <span class="navLabel">ME</span>
-            </div>
-        </div>
-
-        <!-- Разделы -->
-        <div class="sectionContainer">
+        <!-- КОНТЕНТ ПО ЦЕНТРУ -->
+        <div class="contentContainer">
             <!-- ADS -->
             <div id="adsSection" class="section active">
                 <div class="card">
@@ -443,6 +341,7 @@
                         ⏱️ <span id="timerSeconds">0</span>s
                     </div>
 
+                    <!-- Кнопка с фото (исправлено) -->
                     <button class="button" id="watchAdBtn">
                         <img src="https://i.postimg.cc/7LDLPzrl/rewind.png" alt="watch">
                         watch ad — 100
@@ -464,12 +363,11 @@
                 </div>
             </div>
 
-            <!-- REF — картинки поменяны местами -->
+            <!-- REF -->
             <div id="refSection" class="section">
                 <div class="card">
                     <div class="cardTitle">referral levels</div>
                     
-                    <!-- Level 1 — теперь картинка sign.png -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge">
@@ -480,7 +378,6 @@
                         <span class="statsValue" id="level1">0</span>
                     </div>
 
-                    <!-- Level 2 — картинка sign-2.png (без изменений) -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge">
@@ -491,7 +388,6 @@
                         <span class="statsValue" id="level2">0</span>
                     </div>
 
-                    <!-- Level 3 — теперь картинка sign-1.png -->
                     <div class="statsRow">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="levelBadge">
@@ -528,9 +424,9 @@
             <!-- PROFILE -->
             <div id="profileSection" class="section">
                 <div class="card">
-                    <div class="avatar" id="profileAvatar">👤</div>
-                    <div class="profileName" id="profileName">User</div>
-                    <div class="profileRank" id="profileRank" onclick="showRanksModal()">bronze</div>
+                    <div class="avatar" style="width:70px; height:70px; background:#1A1A1A; border-radius:35px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:36px;">👤</div>
+                    <div class="profileName" style="font-size:22px; font-weight:500; text-align:center; margin-bottom:8px;" id="profileName">User</div>
+                    <div class="profileRank" style="background:#1A1A1A; padding:6px 18px; border-radius:40px; display:inline-block; margin:0 auto 24px; color:#FFFFFF; cursor:pointer;" id="profileRank" onclick="showRanksModal()">bronze</div>
 
                     <div class="statsRow">
                         <span class="statsLabel">total earned</span>
@@ -551,6 +447,30 @@
                 </div>
             </div>
         </div>
+
+        <!-- НАВИГАЦИЯ СНИЗУ -->
+        <div class="navBar">
+            <div class="navItem active" data-section="ads">
+                <img src="https://i.postimg.cc/ZnmB1ghx/ads-1.png" class="navIconImg" alt="ads">
+                <span class="navLabel">ADS</span>
+            </div>
+            <div class="navItem" data-section="tasks">
+                <img src="https://i.postimg.cc/5NxQgZ3h/task.png" class="navIconImg" alt="tasks">
+                <span class="navLabel">TASKS</span>
+            </div>
+            <div class="navItem" data-section="ref">
+                <img src="https://i.postimg.cc/YqbGsbDY/referral-1.png" class="navIconImg" alt="referrals">
+                <span class="navLabel">REF</span>
+            </div>
+            <div class="navItem" data-section="top">
+                <img src="https://i.postimg.cc/g27wYrWc/trophy.png" class="navIconImg" alt="top">
+                <span class="navLabel">TOP</span>
+            </div>
+            <div class="navItem" data-section="profile">
+                <img src="https://i.postimg.cc/QtGHTPCn/profile.png" class="navIconImg" alt="profile">
+                <span class="navLabel">ME</span>
+            </div>
+        </div>
     </div>
 
     <!-- Модалка рангов -->
@@ -566,11 +486,9 @@
         </div>
     </div>
 
-    <!-- Тосты -->
     <div id="toast" class="toast hidden"></div>
 
     <script>
-        // ===== FIREBASE =====
         const firebaseConfig = {
             apiKey: "AIzaSyD2DVmirNOr3QYMTNmosl0SQYl_4fwTqfQ",
             authDomain: "refton-352c8.firebaseapp.com",
@@ -583,19 +501,17 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ===== TELEGRAM =====
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
         const TG_USER = tg?.initDataUnsafe?.user || { id: Date.now(), first_name: 'User' };
-        const BOT_USERNAME = 'RefTON_bot'; // ЗАМЕНИТЬ
+        const BOT_USERNAME = 'RefTON_bot';
         const REWARDED_ID = '23154';
         const TASK_ID = '23158';
         const DAILY_LIMIT = 12;
         const COOLDOWN = 35;
         const COIN_TO_TON = 0.00001;
 
-        // ===== STATE =====
         let state = {
             user: {
                 id: TG_USER.id.toString(),
@@ -614,7 +530,6 @@
             timer: null
         };
 
-        // ===== ЗАГРУЗКА =====
         async function loadUser() {
             try {
                 const doc = db.collection('users').doc(state.user.id);
@@ -653,7 +568,6 @@
             }
         }
 
-        // ===== РЕКЛАМА =====
         async function watchAd() {
             if (state.cooldown > 0) { showToast(`wait ${state.cooldown}s`); return; }
             if (state.user.viewsToday >= DAILY_LIMIT) { showToast('daily limit'); return; }
@@ -692,7 +606,6 @@
             }, 1000);
         }
 
-        // ===== БОНУС =====
         async function dailyBonus() {
             const last = localStorage.getItem('bonus');
             const today = new Date().toDateString();
@@ -705,7 +618,6 @@
             showToast('+50');
         }
 
-        // ===== TASK =====
         async function getTask() {
             try {
                 const task = window.Adsgram.init({ blockId: TASK_ID });
@@ -723,7 +635,6 @@
             }
         }
 
-        // ===== РАНГ =====
         function updateRank() {
             const count = state.user.referrals.l1.length;
             if (count >= 100) state.user.rank = 'diamond';
@@ -733,7 +644,6 @@
             else state.user.rank = 'bronze';
         }
 
-        // ===== UI =====
         function updateUI() {
             document.getElementById('bigCoins').textContent = state.user.coins;
             document.getElementById('miniCoins').textContent = state.user.coins;
@@ -776,8 +686,8 @@
                 snap.forEach((doc, i) => {
                     const data = doc.data();
                     html.push(`
-                        <div class="leaderItem">
-                            <div class="rank">${i+1}</div>
+                        <div class="leaderItem" style="display:flex; align-items:center; gap:16px; padding:16px; border-radius:20px; background:#0F0F0F; margin-bottom:8px; border:1px solid #1A1A1A;">
+                            <div style="width:32px; height:32px; background:#1A1A1A; border-radius:16px; display:flex; align-items:center; justify-content:center;">${i+1}</div>
                             <div style="flex:1">${data.name || 'User'}</div>
                             <div style="font-weight:400">${data.totalEarned || 0}</div>
                         </div>
@@ -789,7 +699,6 @@
             }
         }
 
-        // ===== НАВИГАЦИЯ =====
         document.querySelectorAll('.navItem').forEach(item => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.navItem').forEach(n => n.classList.remove('active'));
@@ -799,7 +708,6 @@
             });
         });
 
-        // ===== КНОПКИ =====
         document.getElementById('watchAdBtn').addEventListener('click', watchAd);
         document.getElementById('dailyBonusBtn').addEventListener('click', dailyBonus);
         document.getElementById('taskBtn').addEventListener('click', getTask);
@@ -813,12 +721,10 @@
             window.open(`https://t.me/share/url?url=${url}&text=${text}`);
         });
 
-        // ===== МОДАЛКА =====
         window.showRanksModal = function() {
             document.getElementById('ranksModal').style.display = 'flex';
         };
 
-        // ===== СТАРТ =====
         loadUser();
     </script>
 </body>
