@@ -427,7 +427,6 @@
             padding: 20px;
         }
         
-        /* Стили для заданий */
         .task-card {
             background: rgba(20,25,35,0.5);
             border-radius: 20px;
@@ -502,22 +501,22 @@
                     </div>
                     <button class="button" id="watchAdBtn">
                         <img src="https://i.postimg.cc/NGTm06JY/playback.png" alt="watch">
-                        watch ad — 10 coins (≈0.0001 TON)
+                        watch ad — 10 coins (≈0.001 TON)
                     </button>
                     <button class="button buttonOutline" id="dailyBonusBtn">
                         <img src="https://i.postimg.cc/d1NQ9xVt/gift.png" alt="bonus">
-                        daily +25 coins (≈0.00025 TON)
+                        daily +25 coins (≈0.0025 TON)
                     </button>
                 </div>
             </div>
 
-            <!-- TASKS (обновлено) -->
+            <!-- TASKS -->
             <div id="tasksSection" class="section">
                 <div class="card">
                     <div class="cardTitle">available tasks</div>
                     <div class="task-card">
                         <div class="task-title">📋 Complete AdsGram task</div>
-                        <div class="task-reward">reward: 50 coins (≈0.0005 TON)</div>
+                        <div class="task-reward">reward: 50 coins (≈0.005 TON)</div>
                         <button class="task-button" id="taskBtn">complete task</button>
                     </div>
                 </div>
@@ -562,7 +561,7 @@
                 </div>
             </div>
 
-            <!-- TOP (с ID для админа) -->
+            <!-- TOP -->
             <div id="topSection" class="section">
                 <div class="card" style="padding: 20px;">
                     <div class="tabBar">
@@ -646,15 +645,15 @@
         (function() {
             // Конфигурация
             const CONFIG = {
-                BOT_USERNAME: 'RefTON_bot',
+                BOT_USERNAME: 'RefTON_bot', // Замени на своего бота
                 REWARDED_ID: '23154',
                 TASK_ID: '23158',
                 DAILY_LIMIT: 12,
                 COOLDOWN: 35,
-                COIN_TO_TON: 0.00001, // 10 coins = 0.0001 TON
+                COIN_TO_TON: 0.0001, // 1 коин = 0.0001 TON
                 MIN_WITHDRAW: 10000,
-                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json',
-                ADMIN_ID: '7020322752' // Твой ID для отображения в рейтинге
+                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json', // Замени
+                ADMIN_ID: '7020322752' // Твой ID
             };
 
             // Firebase
@@ -692,6 +691,106 @@
                 timer: null
             };
 
+            // Функция для безопасной работы с Firestore
+            async function safeFirestoreOperation(operation) {
+                try {
+                    return await operation();
+                } catch (error) {
+                    console.error('Firestore operation failed:', error);
+                    
+                    // Проверяем конкретные ошибки
+                    if (error.code === 'permission-denied') {
+                        showToast('Database permission error. Please check Firestore rules.');
+                    } else if (error.code === 'unavailable') {
+                        showToast('Database unavailable. Check your connection.');
+                    } else if (error.code === 'not-found') {
+                        // Это нормально для новых пользователей
+                        return null;
+                    } else {
+                        showToast('Database error. Please try again.');
+                    }
+                    
+                    // Пробуем восстановиться из localStorage
+                    return recoverFromLocalStorage();
+                }
+            }
+
+            // Резервное копирование в localStorage
+            function backupToLocalStorage() {
+                try {
+                    localStorage.setItem('refton_backup_' + state.user.id, JSON.stringify({
+                        user: state.user,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) {
+                    console.log('LocalStorage backup failed:', e);
+                }
+            }
+
+            // Восстановление из localStorage
+            function recoverFromLocalStorage() {
+                try {
+                    const backup = localStorage.getItem('refton_backup_' + state.user.id);
+                    if (backup) {
+                        const data = JSON.parse(backup);
+                        // Проверяем, что бэкап не слишком старый (меньше 7 дней)
+                        if (Date.now() - data.timestamp < 7 * 24 * 60 * 60 * 1000) {
+                            state.user = { ...state.user, ...data.user };
+                            showToast('Loaded from local backup');
+                            updateUI();
+                            return data.user;
+                        }
+                    }
+                } catch (e) {
+                    console.log('Recovery failed:', e);
+                }
+                return null;
+            }
+
+            // Инициализация Firebase с повторными попытками
+            function initFirebase() {
+                return new Promise((resolve, reject) => {
+                    let attempts = 0;
+                    const maxAttempts = 3;
+                    
+                    function tryInit() {
+                        try {
+                            firebase.initializeApp(firebaseConfig);
+                            db = firebase.firestore();
+                            
+                            // Настройки Firestore для лучшей работы
+                            db.settings({
+                                cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+                                ignoreUndefinedProperties: true
+                            });
+                            
+                            // Включаем офлайн-режим
+                            db.enablePersistence()
+                                .catch((err) => {
+                                    if (err.code === 'failed-precondition') {
+                                        console.log('Persistence failed: multiple tabs open');
+                                    } else if (err.code === 'unimplemented') {
+                                        console.log('Persistence not supported');
+                                    }
+                                });
+                            
+                            console.log('Firebase initialized successfully');
+                            resolve();
+                        } catch (e) {
+                            attempts++;
+                            if (attempts < maxAttempts) {
+                                console.log(`Firebase init attempt ${attempts} failed, retrying...`);
+                                setTimeout(tryInit, 1000);
+                            } else {
+                                reject(e);
+                            }
+                        }
+                    }
+                    
+                    tryInit();
+                });
+            }
+
             // Инициализация
             async function init() {
                 try {
@@ -702,9 +801,13 @@
                         tg.expand();
                     }
 
-                    // Firebase
-                    firebase.initializeApp(firebaseConfig);
-                    db = firebase.firestore();
+                    // Firebase с повторными попытками
+                    try {
+                        await initFirebase();
+                    } catch (e) {
+                        console.log('Firebase init failed, using localStorage fallback:', e);
+                        showToast('Using offline mode');
+                    }
 
                     // Пользовательские данные
                     const tgUser = tg?.initDataUnsafe?.user || { 
@@ -762,39 +865,69 @@
             // Загрузка пользователя
             async function loadUser() {
                 try {
-                    const docRef = db.collection('users').doc(state.user.id);
-                    const snap = await docRef.get();
-                    
-                    if (snap.exists) {
-                        const data = snap.data();
-                        state.user = { ...state.user, ...data };
-                        
-                        if (state.user.walletAddress) {
-                            updateWalletUI(state.user.walletAddress);
-                        }
-                    } else {
-                        await docRef.set(state.user);
+                    if (!db) {
+                        // Если Firebase не инициализирован, пробуем localStorage
+                        recoverFromLocalStorage();
+                        updateUI();
+                        return;
                     }
+
+                    const docRef = db.collection('users').doc(state.user.id);
                     
-                    updateUI();
-                    loadLeaderboards();
+                    await safeFirestoreOperation(async () => {
+                        const snap = await docRef.get();
+                        
+                        if (snap.exists) {
+                            const data = snap.data();
+                            state.user = { ...state.user, ...data };
+                            
+                            if (state.user.walletAddress) {
+                                updateWalletUI(state.user.walletAddress);
+                            }
+                            
+                            // Сохраняем резервную копию
+                            backupToLocalStorage();
+                        } else {
+                            await docRef.set(state.user);
+                            backupToLocalStorage();
+                        }
+                        
+                        updateUI();
+                        loadLeaderboards();
+                    });
                     
                 } catch (e) {
                     console.log('Load user error:', e);
                     showToast('Error loading user data');
+                    
+                    // Пробуем восстановиться
+                    recoverFromLocalStorage();
+                    updateUI();
                 }
             }
 
             // Сохранение пользователя
             async function saveUser() {
                 try {
+                    if (!db) {
+                        backupToLocalStorage();
+                        return;
+                    }
+
                     const docRef = db.collection('users').doc(state.user.id);
-                    await docRef.set({
-                        ...state.user,
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
+                    
+                    await safeFirestoreOperation(async () => {
+                        await docRef.set({
+                            ...state.user,
+                            lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                        
+                        backupToLocalStorage();
+                    });
+                    
                 } catch (e) {
                     console.log('Save user error:', e);
+                    backupToLocalStorage();
                 }
             }
 
@@ -892,72 +1025,84 @@
                 }
             }
 
-            // Загрузка лидербордов (с ID для админа)
+            // Загрузка лидербордов
             async function loadLeaderboards() {
                 try {
-                    // Реферальный топ
-                    const refSnapshot = await db.collection('users')
-                        .orderBy('referrals.l1', 'desc')
-                        .limit(10)
-                        .get();
-                    
-                    let refHtml = '';
-                    let refIndex = 0;
-                    
-                    refSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
+                    if (!db) {
+                        showMockLeaderboards();
+                        return;
+                    }
+
+                    await safeFirestoreOperation(async () => {
+                        // Реферальный топ
+                        const refSnapshot = await db.collection('users')
+                            .orderBy('referrals.l1', 'desc')
+                            .limit(10)
+                            .get();
                         
-                        // Для админа показываем ID, для остальных только имя
-                        const displayName = doc.id === CONFIG.ADMIN_ID 
-                            ? `${data.name || 'User'} (${doc.id})` 
-                            : data.name || 'User';
+                        let refHtml = '';
+                        let refIndex = 0;
                         
-                        refHtml += `
-                            <div class="leaderItem">
-                                <div class="rank ${rankClass}">${refIndex + 1}</div>
-                                <div style="flex:1; color:#fff;">${displayName}</div>
-                                <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
-                            </div>
-                        `;
-                        refIndex++;
+                        refSnapshot.forEach(doc => {
+                            const data = doc.data();
+                            const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
+                            
+                            const displayName = doc.id === CONFIG.ADMIN_ID 
+                                ? `${data.name || 'User'} (${doc.id})` 
+                                : data.name || 'User';
+                            
+                            refHtml += `
+                                <div class="leaderItem">
+                                    <div class="rank ${rankClass}">${refIndex + 1}</div>
+                                    <div style="flex:1; color:#fff;">${displayName}</div>
+                                    <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
+                                </div>
+                            `;
+                            refIndex++;
+                        });
+                        
+                        document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
+
+                        // Топ по заработку
+                        const earnSnapshot = await db.collection('users')
+                            .orderBy('totalEarned', 'desc')
+                            .limit(10)
+                            .get();
+                        
+                        let earnHtml = '';
+                        let earnIndex = 0;
+                        
+                        earnSnapshot.forEach(doc => {
+                            const data = doc.data();
+                            const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
+                            
+                            const displayName = doc.id === CONFIG.ADMIN_ID 
+                                ? `${data.name || 'User'} (${doc.id})` 
+                                : data.name || 'User';
+                            
+                            earnHtml += `
+                                <div class="leaderItem">
+                                    <div class="rank ${rankClass}">${earnIndex + 1}</div>
+                                    <div style="flex:1; color:#fff;">${displayName}</div>
+                                    <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
+                                </div>
+                            `;
+                            earnIndex++;
+                        });
+                        
+                        document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
                     });
                     
-                    document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
-
-                    // Топ по заработку
-                    const earnSnapshot = await db.collection('users')
-                        .orderBy('totalEarned', 'desc')
-                        .limit(10)
-                        .get();
-                    
-                    let earnHtml = '';
-                    let earnIndex = 0;
-                    
-                    earnSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
-                        
-                        // Для админа показываем ID, для остальных только имя
-                        const displayName = doc.id === CONFIG.ADMIN_ID 
-                            ? `${data.name || 'User'} (${doc.id})` 
-                            : data.name || 'User';
-                        
-                        earnHtml += `
-                            <div class="leaderItem">
-                                <div class="rank ${rankClass}">${earnIndex + 1}</div>
-                                <div style="flex:1; color:#fff;">${displayName}</div>
-                                <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
-                            </div>
-                        `;
-                        earnIndex++;
-                    });
-                    
-                    document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
-
                 } catch (e) {
                     console.log('Leaderboard error:', e);
+                    showMockLeaderboards();
                 }
+            }
+
+            // Заглушка для лидерборда (если нет базы)
+            function showMockLeaderboards() {
+                document.getElementById('refLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">connect to see data</div>';
+                document.getElementById('earnLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">connect to see data</div>';
             }
 
             // Просмотр рекламы
@@ -981,14 +1126,14 @@
                     const ad = window.Adsgram.init({ blockId: CONFIG.REWARDED_ID });
                     await ad.show();
                     
-                    state.user.coins += 10; // Новый курс
+                    state.user.coins += 10;
                     state.user.viewsToday++;
                     state.user.totalViews++;
                     state.user.totalEarned += 10;
                     
                     await saveUser();
                     updateUI();
-                    showToast('+10 coins (≈0.0001 TON)');
+                    showToast('+10 coins (≈0.001 TON)');
                     startCooldown();
                     
                 } catch (e) {
@@ -1035,12 +1180,12 @@
                         return;
                     }
                     
-                    state.user.coins += 25; // Новый курс
+                    state.user.coins += 25;
                     localStorage.setItem('bonus', today);
                     
                     await saveUser();
                     updateUI();
-                    showToast('+25 coins (≈0.00025 TON)');
+                    showToast('+25 coins (≈0.0025 TON)');
                     
                 } catch (e) {
                     console.log('Bonus error:', e);
@@ -1048,7 +1193,7 @@
                 }
             }
 
-            // Получение задания (заглушка)
+            // Получение задания
             async function getTask() {
                 try {
                     if (!window.Adsgram) {
@@ -1059,12 +1204,12 @@
                     const task = window.Adsgram.init({ blockId: CONFIG.TASK_ID });
                     await task.show();
                     
-                    state.user.coins += 50; // Новый курс
+                    state.user.coins += 50;
                     state.user.tasksDone++;
                     
                     await saveUser();
                     updateUI();
-                    showToast('+50 coins (≈0.0005 TON)');
+                    showToast('+50 coins (≈0.005 TON)');
                     
                 } catch (e) {
                     console.log('Task error:', e);
