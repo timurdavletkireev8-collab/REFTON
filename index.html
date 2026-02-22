@@ -98,105 +98,98 @@
     </nav>
 
     <script>
-        // --- МОДУЛЬ БАЗЫ ДАННЫХ (DB Engine на базе localStorage) ---
+        // --- БАЗА ДАННЫХ ---
         const DB = {
-            save(key, data) {
-                localStorage.setItem(key, JSON.stringify(data));
+            // Ключ для хранения данных в браузере
+            STORAGE_KEY: 'user_app_data',
+
+            // Сохранение всей "таблицы" пользователя
+            save(data) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
             },
-            load(key) {
-                const data = localStorage.getItem(key);
+
+            // Загрузка данных
+            load() {
+                const data = localStorage.getItem(this.STORAGE_KEY);
                 return data ? JSON.parse(data) : null;
             },
-            // Инициализация данных пользователя при первом входе
-            initUser() {
-                let user = this.load('user_data');
+
+            // Инициализация (создание записи, если её нет)
+            init() {
+                let user = this.load();
                 if (!user) {
                     user = {
-                        balance: 150.50, // Стартовый баланс
+                        balance: 500.00, // Начальное значение для проверки
                         wallet: null,
                         connected: false
                     };
-                    this.save('user_data', user);
+                    this.save(user);
                 }
                 return user;
             },
-            // Обновление конкретных данных пользователя
-            updateUser(newData) {
-                const current = this.initUser();
-                const updated = { ...current, ...newData };
-                this.save('user_data', updated);
+
+            // Обновление конкретного поля (баланс, кошелек и т.д.)
+            update(fields) {
+                const current = this.init();
+                const updated = { ...current, ...fields };
+                this.save(updated);
                 return updated;
             }
         };
 
-        // --- ЛОГИКА ПРИЛОЖЕНИЯ ---
+        // --- ФУНКЦИИ ИНТЕРФЕЙСА ---
 
-        // Функция запуска при загрузке страницы
-        function init() {
-            const user = DB.initUser();
-            // Выводим баланс из базы данных
+        function initApp() {
+            const user = DB.init();
+            renderUI(user);
+        }
+
+        // Рендерим данные из БД на экран
+        function renderUI(user) {
             document.getElementById('balance-display').innerText = `${user.balance.toFixed(2)} TON`;
             
-            // Проверяем, привязан ли уже кошелек
-            if (user.connected) {
-                showWalletStatus(user.wallet);
+            if (user.connected && user.wallet) {
+                const status = document.getElementById('wallet-status');
+                const preview = document.getElementById('addr-preview');
+                status.classList.remove('hidden');
+                preview.innerText = user.wallet;
+                // Можно скрыть кнопку, если кошелек уже привязан
+                // document.querySelector('button[onclick="openWalletModal()"]').style.display = 'none';
             }
         }
 
-        // Переключение вкладок в нижнем меню
         function showTab(tabId) {
-            // Скрываем все вкладки
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            // Показываем нужную
             document.getElementById(tabId).classList.add('active');
             
-            // Обновляем цвета кнопок в меню (простая визуализация)
             const navButtons = document.querySelectorAll('nav button');
-            navButtons.forEach(btn => {
-                btn.classList.remove('text-blue-500');
-                btn.classList.add('text-gray-400');
-            });
-            event.currentTarget.classList.remove('text-gray-400');
-            event.currentTarget.classList.add('text-blue-500');
+            navButtons.forEach(btn => btn.classList.replace('text-blue-500', 'text-gray-400'));
+            event.currentTarget.classList.replace('text-gray-400', 'text-blue-500');
         }
 
-        // Открытие модального окна выбора кошелька
         function openWalletModal() {
             document.getElementById('wallet-modal').classList.add('active');
         }
 
-        // Закрытие модального окна
         function closeWalletModal() {
             document.getElementById('wallet-modal').classList.remove('active');
         }
 
-        // Функция привязки кошелька
-        function connectWallet(name) {
-            // Сохраняем информацию о привязанном кошельке в нашу базу данных
-            DB.updateUser({
-                wallet: name,
+        function connectWallet(walletName) {
+            // Записываем в БД через метод update
+            const updatedUser = DB.update({
+                wallet: walletName,
                 connected: true
             });
 
-            // Обновляем интерфейс
-            showWalletStatus(name);
+            // Сразу отображаем изменения
+            renderUI(updatedUser);
             closeWalletModal();
-            
-            // Небольшое уведомление
-            alert(`Кошелёк ${name} успешно привязан! Данные сохранены в базе.`);
+            alert("Данные успешно сохранены в базе!");
         }
 
-        // Обновление UI после привязки
-        function showWalletStatus(name) {
-            const status = document.getElementById('wallet-status');
-            const preview = document.getElementById('addr-preview');
-            status.classList.remove('hidden');
-            preview.innerText = name;
-        }
-
-        // Запуск инициализации при загрузке документа
-        document.addEventListener('DOMContentLoaded', init);
+        // Запуск при старте
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
-
