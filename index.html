@@ -727,7 +727,7 @@
                 }
             }
 
-            // Восстановление из localStorage
+            // Восстановление из localStorage (без обновления UI)
             function recoverFromLocalStorage() {
                 try {
                     const backup = localStorage.getItem('refton_backup_' + state.user.id);
@@ -736,9 +736,7 @@
                         // Проверяем, что бэкап не слишком старый (меньше 7 дней)
                         if (Date.now() - data.timestamp < 7 * 24 * 60 * 60 * 1000) {
                             state.user = { ...state.user, ...data.user };
-                            showToast('Loaded from local backup');
-                            updateUI();
-                            return data.user;
+                            return state.user;
                         }
                     }
                 } catch (e) {
@@ -829,7 +827,8 @@
 
                     // TON Connect
                     try {
-                        tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                        // Исправлено: используем глобальный TonConnectUI, а не TON_CONNECT_UI
+                        tonConnectUI = new TonConnectUI({
                             manifestUrl: CONFIG.MANIFEST_URL,
                             buttonRootId: 'walletContainer'
                         });
@@ -865,43 +864,41 @@
             // Загрузка пользователя
             async function loadUser() {
                 try {
-                    if (!db) {
-                        // Если Firebase не инициализирован, пробуем localStorage
-                        recoverFromLocalStorage();
-                        updateUI();
-                        return;
+                    let loadedFromLocal = false;
+
+                    if (db) {
+                        const docRef = db.collection('users').doc(state.user.id);
+                        try {
+                            const snap = await docRef.get();
+                            if (snap.exists) {
+                                state.user = { ...state.user, ...snap.data() };
+                            } else {
+                                await docRef.set(state.user);
+                            }
+                        } catch (e) {
+                            console.warn('Firestore error, loading from localStorage', e);
+                            loadedFromLocal = recoverFromLocalStorage() !== null;
+                        }
+                    } else {
+                        loadedFromLocal = recoverFromLocalStorage() !== null;
                     }
 
-                    const docRef = db.collection('users').doc(state.user.id);
-                    
-                    await safeFirestoreOperation(async () => {
-                        const snap = await docRef.get();
-                        
-                        if (snap.exists) {
-                            const data = snap.data();
-                            state.user = { ...state.user, ...data };
-                            
-                            if (state.user.walletAddress) {
-                                updateWalletUI(state.user.walletAddress);
-                            }
-                            
-                            // Сохраняем резервную копию
-                            backupToLocalStorage();
-                        } else {
-                            await docRef.set(state.user);
-                            backupToLocalStorage();
-                        }
-                        
-                        updateUI();
-                        loadLeaderboards();
-                    });
-                    
+                    // Если не загрузились из localStorage, оставляем текущее состояние
+                    if (!loadedFromLocal) {
+                        // Сохраняем резервную копию
+                        backupToLocalStorage();
+                    }
+
+                    if (state.user.walletAddress) {
+                        updateWalletUI(state.user.walletAddress);
+                    }
+
+                    updateUI();
+                    loadLeaderboards();
                 } catch (e) {
-                    console.log('Load user error:', e);
+                    console.error('Fatal error in loadUser', e);
                     showToast('Error loading user data');
-                    
-                    // Пробуем восстановиться
-                    recoverFromLocalStorage();
+                    // Показываем интерфейс с дефолтными значениями
                     updateUI();
                 }
             }
@@ -939,7 +936,8 @@
                 if (lastDate !== today) {
                     state.user.viewsToday = 0;
                     localStorage.setItem('lastDate', today);
-                    saveUser();
+                    saveUser(); // сохраняем в фоне
+                    updateUI(); // сразу обновляем интерфейс
                 }
             }
 
@@ -956,7 +954,6 @@
                 // Статистика
                 document.getElementById('todayViews').textContent = state.user.viewsToday;
                 document.getElementById('dailyLimit').textContent = CONFIG.DAILY_LIMIT;
-                document.getElementById('tasksDone').textContent = state.user.tasksDone;
                 
                 // Рефералы
                 document.getElementById('level1').textContent = state.user.referrals.l1?.length || 0;
@@ -1033,65 +1030,63 @@
                         return;
                     }
 
-                    await safeFirestoreOperation(async () => {
-                        // Реферальный топ
-                        const refSnapshot = await db.collection('users')
-                            .orderBy('referrals.l1', 'desc')
-                            .limit(10)
-                            .get();
+                    // Реферальный топ (временно сортируем по totalEarned, так как по массиву сортировать нельзя)
+                    const refSnapshot = await db.collection('users')
+                        .orderBy('totalEarned', 'desc')
+                        .limit(10)
+                        .get();
+                    
+                    let refHtml = '';
+                    let refIndex = 0;
+                    
+                    refSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
                         
-                        let refHtml = '';
-                        let refIndex = 0;
+                        const displayName = doc.id === CONFIG.ADMIN_ID 
+                            ? `${data.name || 'User'} (${doc.id})` 
+                            : data.name || 'User';
                         
-                        refSnapshot.forEach(doc => {
-                            const data = doc.data();
-                            const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
-                            
-                            const displayName = doc.id === CONFIG.ADMIN_ID 
-                                ? `${data.name || 'User'} (${doc.id})` 
-                                : data.name || 'User';
-                            
-                            refHtml += `
-                                <div class="leaderItem">
-                                    <div class="rank ${rankClass}">${refIndex + 1}</div>
-                                    <div style="flex:1; color:#fff;">${displayName}</div>
-                                    <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
-                                </div>
-                            `;
-                            refIndex++;
-                        });
-                        
-                        document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
-
-                        // Топ по заработку
-                        const earnSnapshot = await db.collection('users')
-                            .orderBy('totalEarned', 'desc')
-                            .limit(10)
-                            .get();
-                        
-                        let earnHtml = '';
-                        let earnIndex = 0;
-                        
-                        earnSnapshot.forEach(doc => {
-                            const data = doc.data();
-                            const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
-                            
-                            const displayName = doc.id === CONFIG.ADMIN_ID 
-                                ? `${data.name || 'User'} (${doc.id})` 
-                                : data.name || 'User';
-                            
-                            earnHtml += `
-                                <div class="leaderItem">
-                                    <div class="rank ${rankClass}">${earnIndex + 1}</div>
-                                    <div style="flex:1; color:#fff;">${displayName}</div>
-                                    <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
-                                </div>
-                            `;
-                            earnIndex++;
-                        });
-                        
-                        document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
+                        refHtml += `
+                            <div class="leaderItem">
+                                <div class="rank ${rankClass}">${refIndex + 1}</div>
+                                <div style="flex:1; color:#fff;">${displayName}</div>
+                                <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
+                            </div>
+                        `;
+                        refIndex++;
                     });
+                    
+                    document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
+
+                    // Топ по заработку
+                    const earnSnapshot = await db.collection('users')
+                        .orderBy('totalEarned', 'desc')
+                        .limit(10)
+                        .get();
+                    
+                    let earnHtml = '';
+                    let earnIndex = 0;
+                    
+                    earnSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
+                        
+                        const displayName = doc.id === CONFIG.ADMIN_ID 
+                            ? `${data.name || 'User'} (${doc.id})` 
+                            : data.name || 'User';
+                        
+                        earnHtml += `
+                            <div class="leaderItem">
+                                <div class="rank ${rankClass}">${earnIndex + 1}</div>
+                                <div style="flex:1; color:#fff;">${displayName}</div>
+                                <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
+                            </div>
+                        `;
+                        earnIndex++;
+                    });
+                    
+                    document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
                     
                 } catch (e) {
                     console.log('Leaderboard error:', e);
@@ -1165,6 +1160,7 @@
                         }
                     }
                     
+                    // Обновляем кнопки при каждом тике, чтобы разблокировать watchAdBtn
                     updateButtons();
                 }, 1000);
             }
@@ -1206,6 +1202,7 @@
                     
                     state.user.coins += 50;
                     state.user.tasksDone++;
+                    state.user.totalEarned += 50;
                     
                     await saveUser();
                     updateUI();
@@ -1238,11 +1235,21 @@
                 }
             }
 
-            // Копирование ссылки
+            // Копирование ссылки с fallback
             function copyRefLink() {
                 const link = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
-                navigator.clipboard.writeText(link);
-                showToast('Copied!');
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(link).then(() => showToast('Copied!'));
+                } else {
+                    // Fallback для старых браузеров
+                    const textarea = document.createElement('textarea');
+                    textarea.value = link;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showToast('Copied!');
+                }
             }
 
             // Поделиться ссылкой
