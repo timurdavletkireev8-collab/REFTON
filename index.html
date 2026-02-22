@@ -426,6 +426,38 @@
             text-align: center;
             padding: 20px;
         }
+        
+        /* Стили для заданий */
+        .task-card {
+            background: rgba(20,25,35,0.5);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(108,92,231,0.2);
+        }
+        
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .task-reward {
+            color: #00D2FF;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .task-button {
+            background: rgba(108,92,231,0.2);
+            border: 1px solid rgba(108,92,231,0.5);
+            border-radius: 30px;
+            padding: 10px;
+            width: 100%;
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -470,21 +502,24 @@
                     </div>
                     <button class="button" id="watchAdBtn">
                         <img src="https://i.postimg.cc/NGTm06JY/playback.png" alt="watch">
-                        watch ad — 100 (≈0.001 TON)
+                        watch ad — 10 coins (≈0.0001 TON)
                     </button>
                     <button class="button buttonOutline" id="dailyBonusBtn">
                         <img src="https://i.postimg.cc/d1NQ9xVt/gift.png" alt="bonus">
-                        daily +50 (≈0.0005 TON)
+                        daily +25 coins (≈0.00025 TON)
                     </button>
                 </div>
             </div>
 
-            <!-- TASKS -->
+            <!-- TASKS (обновлено) -->
             <div id="tasksSection" class="section">
                 <div class="card">
-                    <div class="cardTitle">completed</div>
-                    <div class="statsValue" style="font-size: 56px; margin-bottom: 24px;" id="tasksDone">0</div>
-                    <button class="button" id="taskBtn">get new task</button>
+                    <div class="cardTitle">available tasks</div>
+                    <div class="task-card">
+                        <div class="task-title">📋 Complete AdsGram task</div>
+                        <div class="task-reward">reward: 50 coins (≈0.0005 TON)</div>
+                        <button class="task-button" id="taskBtn">complete task</button>
+                    </div>
                 </div>
             </div>
 
@@ -527,7 +562,7 @@
                 </div>
             </div>
 
-            <!-- TOP -->
+            <!-- TOP (с ID для админа) -->
             <div id="topSection" class="section">
                 <div class="card" style="padding: 20px;">
                     <div class="tabBar">
@@ -616,9 +651,10 @@
                 TASK_ID: '23158',
                 DAILY_LIMIT: 12,
                 COOLDOWN: 35,
-                COIN_TO_TON: 0.00001,
+                COIN_TO_TON: 0.00001, // 10 coins = 0.0001 TON
                 MIN_WITHDRAW: 10000,
-                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json'
+                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json',
+                ADMIN_ID: '7020322752' // Твой ID для отображения в рейтинге
             };
 
             // Firebase
@@ -856,7 +892,7 @@
                 }
             }
 
-            // Загрузка лидербордов
+            // Загрузка лидербордов (с ID для админа)
             async function loadLeaderboards() {
                 try {
                     // Реферальный топ
@@ -872,10 +908,15 @@
                         const data = doc.data();
                         const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
                         
+                        // Для админа показываем ID, для остальных только имя
+                        const displayName = doc.id === CONFIG.ADMIN_ID 
+                            ? `${data.name || 'User'} (${doc.id})` 
+                            : data.name || 'User';
+                        
                         refHtml += `
                             <div class="leaderItem">
                                 <div class="rank ${rankClass}">${refIndex + 1}</div>
-                                <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
+                                <div style="flex:1; color:#fff;">${displayName}</div>
                                 <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
                             </div>
                         `;
@@ -897,10 +938,15 @@
                         const data = doc.data();
                         const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
                         
+                        // Для админа показываем ID, для остальных только имя
+                        const displayName = doc.id === CONFIG.ADMIN_ID 
+                            ? `${data.name || 'User'} (${doc.id})` 
+                            : data.name || 'User';
+                        
                         earnHtml += `
                             <div class="leaderItem">
                                 <div class="rank ${rankClass}">${earnIndex + 1}</div>
-                                <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
+                                <div style="flex:1; color:#fff;">${displayName}</div>
                                 <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
                             </div>
                         `;
@@ -935,14 +981,14 @@
                     const ad = window.Adsgram.init({ blockId: CONFIG.REWARDED_ID });
                     await ad.show();
                     
-                    state.user.coins += 100;
+                    state.user.coins += 10; // Новый курс
                     state.user.viewsToday++;
                     state.user.totalViews++;
-                    state.user.totalEarned += 100;
+                    state.user.totalEarned += 10;
                     
                     await saveUser();
                     updateUI();
-                    showToast('+100 (≈0.001 TON)');
+                    showToast('+10 coins (≈0.0001 TON)');
                     startCooldown();
                     
                 } catch (e) {
@@ -989,12 +1035,12 @@
                         return;
                     }
                     
-                    state.user.coins += 50;
+                    state.user.coins += 25; // Новый курс
                     localStorage.setItem('bonus', today);
                     
                     await saveUser();
                     updateUI();
-                    showToast('+50 (≈0.0005 TON)');
+                    showToast('+25 coins (≈0.00025 TON)');
                     
                 } catch (e) {
                     console.log('Bonus error:', e);
@@ -1002,7 +1048,7 @@
                 }
             }
 
-            // Получение задания
+            // Получение задания (заглушка)
             async function getTask() {
                 try {
                     if (!window.Adsgram) {
@@ -1013,13 +1059,12 @@
                     const task = window.Adsgram.init({ blockId: CONFIG.TASK_ID });
                     await task.show();
                     
-                    const reward = Math.floor(Math.random() * 400) + 100;
-                    state.user.coins += reward;
+                    state.user.coins += 50; // Новый курс
                     state.user.tasksDone++;
                     
                     await saveUser();
                     updateUI();
-                    showToast(`+${reward} (≈${(reward * CONFIG.COIN_TO_TON).toFixed(4)} TON)`);
+                    showToast('+50 coins (≈0.0005 TON)');
                     
                 } catch (e) {
                     console.log('Task error:', e);
