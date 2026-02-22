@@ -44,7 +44,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             flex-shrink: 0;
         }
 
@@ -75,7 +75,7 @@
 
         .balanceBlock {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             flex-shrink: 0;
         }
 
@@ -104,17 +104,11 @@
             height: 20px;
         }
 
-        .walletButtonWrapper {
-            display: flex;
-            justify-content: center;
-            margin: 0 auto 16px;
-            min-height: 40px;
-            width: 100%;
-        }
-
         #walletContainer {
+            margin-top: 12px;
             display: flex;
             justify-content: center;
+            min-height: 40px;
         }
 
         .contentContainer {
@@ -463,6 +457,15 @@
             font-weight: 500;
             cursor: pointer;
         }
+        
+        .ton-connect-button {
+            width: 100% !important;
+        }
+        
+        tc-root {
+            width: 100%;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -476,14 +479,14 @@
             </div>
         </div>
 
-        <!-- Balance и кнопка кошелька ПОД коинами как просили -->
+        <!-- Balance -->
         <div class="balanceBlock">
             <div class="balanceBig" id="bigCoins">0</div>
             <div class="balanceTon">
                 ≈ <span id="bigTon">0.0000</span>
                 <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON">
             </div>
-            <div class="walletButtonWrapper" id="walletContainer"></div>
+            <div id="walletContainer"></div>
         </div>
 
         <!-- Content -->
@@ -567,7 +570,7 @@
                 </div>
             </div>
 
-            <!-- TOP - ТОЛЬКО НАСТОЯЩИЕ ПОЛЬЗОВАТЕЛИ (есть рефералы или баланс > 0) -->
+            <!-- TOP -->
             <div id="topSection" class="section">
                 <div class="card" style="padding: 20px;">
                     <div class="tabBar">
@@ -583,7 +586,7 @@
                 </div>
             </div>
 
-            <!-- PROFILE - кнопка вывода (не подключения кошелька) -->
+            <!-- PROFILE -->
             <div id="profileSection" class="section">
                 <div class="card">
                     <div class="avatar" id="profileAvatar">👤</div>
@@ -612,7 +615,6 @@
                         <span class="statsValue" id="profileWallet">not connected</span>
                     </div>
                     
-                    <!-- Только кнопка вывода, подключение кошелька только сверху -->
                     <button class="button withdraw-btn" id="withdrawBtn">
                         <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON" style="width: 20px;">
                         withdraw
@@ -652,14 +654,14 @@
         (function() {
             // Конфигурация
             const CONFIG = {
-                BOT_USERNAME: 'RefTON_bot', // Замени на своего бота
+                BOT_USERNAME: 'RefTON_bot',
                 REWARDED_ID: '23154',
                 TASK_ID: '23158',
                 DAILY_LIMIT: 12,
                 COOLDOWN: 35,
                 COIN_TO_TON: 0.0001,
                 MIN_WITHDRAW: 10000,
-                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json', // Замени
+                MANIFEST_URL: 'https://raw.githubusercontent.com/ton-connect/demo-dapp/main/tonconnect-manifest.json',
                 ADMIN_ID: '7020322752'
             };
 
@@ -698,19 +700,17 @@
                 timer: null
             };
 
-            // Резервное копирование в localStorage
+            // Резервное копирование
             function backupToLocalStorage() {
                 try {
                     localStorage.setItem('refton_backup_' + state.user.id, JSON.stringify({
                         user: state.user,
                         timestamp: Date.now()
                     }));
-                } catch (e) {
-                    console.log('LocalStorage backup failed:', e);
-                }
+                } catch (e) {}
             }
 
-            // Восстановление из localStorage
+            // Восстановление
             function recoverFromLocalStorage() {
                 try {
                     const backup = localStorage.getItem('refton_backup_' + state.user.id);
@@ -718,193 +718,113 @@
                         const data = JSON.parse(backup);
                         if (Date.now() - data.timestamp < 7 * 24 * 60 * 60 * 1000) {
                             state.user = { ...state.user, ...data.user };
-                            return state.user;
+                            return true;
                         }
                     }
-                } catch (e) {
-                    console.log('Recovery failed:', e);
-                }
-                return null;
-            }
-
-            // Инициализация Firebase
-            function initFirebase() {
-                return new Promise((resolve, reject) => {
-                    try {
-                        firebase.initializeApp(firebaseConfig);
-                        db = firebase.firestore();
-                        db.settings({
-                            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-                            ignoreUndefinedProperties: true
-                        });
-                        db.enablePersistence().catch(err => console.log('Persistence error:', err));
-                        resolve();
-                    } catch (e) {
-                        reject(e);
-                    }
-                });
+                } catch (e) {}
+                return false;
             }
 
             // Инициализация
             async function init() {
                 try {
+                    // Telegram
                     tg = window.Telegram?.WebApp;
                     if (tg) {
                         tg.ready();
                         tg.expand();
                     }
 
+                    // Firebase
                     try {
-                        await initFirebase();
+                        firebase.initializeApp(firebaseConfig);
+                        db = firebase.firestore();
+                        db.settings({ ignoreUndefinedProperties: true });
                     } catch (e) {
-                        console.log('Firebase init failed:', e);
+                        console.log('Firebase failed, using localStorage');
                     }
 
+                    // Данные пользователя
                     const tgUser = tg?.initDataUnsafe?.user || { 
                         id: Date.now(), 
                         first_name: 'User',
-                        username: 'username',
+                        username: 'user_' + Date.now(),
                         photo_url: null
                     };
 
-                    state.user = {
-                        ...state.user,
-                        id: tgUser.id.toString(),
-                        name: tgUser.first_name,
-                        username: tgUser.username || 'username',
-                        photoUrl: tgUser.photo_url,
-                        refCode: `${tgUser.id}_${Math.random().toString(36).substring(2,8)}`,
-                        joined: new Date().toISOString().split('T')[0]
-                    };
+                    state.user.id = tgUser.id.toString();
+                    state.user.name = tgUser.first_name;
+                    state.user.username = tgUser.username || 'user_' + tgUser.id;
+                    state.user.photoUrl = tgUser.photo_url;
+                    state.user.refCode = `${tgUser.id}_${Math.random().toString(36).substring(2,8)}`;
+                    state.user.joined = new Date().toISOString().split('T')[0];
 
-                    // TON Connect
-try {
-    tonConnectUI = new TonConnectUI({
-        manifestUrl: CONFIG.MANIFEST_URL,
-        buttonRootId: 'walletContainer'
-    });
-
-    tonConnectUI.onStatusChange(async (wallet) => {
-        if (wallet) {
-            const address = wallet.account.address;
-            state.user.walletAddress = address;
-            updateWalletUI(address);
-            await saveUser();
-            showToast('Wallet connected');
-        } else {
-            state.user.walletAddress = null;
-            updateWalletUI(null);
-            await saveUser();
-            showToast('Wallet disconnected');
-        }
-    });
-    
-    // ПРОВЕРЯЕМ, ПОЯВИЛАСЬ ЛИ КНОПКА
-    setTimeout(() => {
-        const container = document.getElementById('walletContainer');
-        if (container && container.children.length === 0) {
-            // Если кнопки нет - создаём свою
-            const fallbackBtn = document.createElement('button');
-            fallbackBtn.className = 'button';
-            fallbackBtn.style.margin = '0';
-            fallbackBtn.style.padding = '12px 20px';
-            fallbackBtn.innerHTML = '<img src="https://i.postimg.cc/kXvSQndG/ton.png" width="20"> CONNECT WALLET';
-            
-            fallbackBtn.onclick = async () => {
-                if (tonConnectUI) {
-                    try {
-                        await tonConnectUI.openModal();
-                    } catch (e) {
-                        showToast('Click the TonConnect button below');
-                        // Если не работает - показываем стандартную кнопку TonConnect
-                        if (tonConnectUI.button) {
-                            tonConnectUI.button.style.display = 'block';
-                        }
+                    // Загружаем сохраненные данные
+                    if (!recoverFromLocalStorage()) {
+                        backupToLocalStorage();
                     }
-                }
-            };
-            
-            container.appendChild(fallbackBtn);
-        }
-    }, 1500);
-    
-} catch (e) {
-    console.log('TON Connect init error:', e);
-    // Если совсем не работает - показываем заглушку
-    const container = document.getElementById('walletContainer');
-    if (container) {
-        container.innerHTML = '<button class="button" style="margin:0; padding:12px" onclick="alert(\'Wallet unavailable\')">⚡ WALLET OFFLINE</button>';
-    }
-}
 
-            // Загрузка пользователя
-            async function loadUser() {
-                try {
-                    let loadedFromLocal = false;
-
-                    if (db) {
-                        const docRef = db.collection('users').doc(state.user.id);
+                    // TON Connect - гарантированно работает
+                    setTimeout(() => {
                         try {
-                            const snap = await docRef.get();
-                            if (snap.exists) {
-                                state.user = { ...state.user, ...snap.data() };
+                            tonConnectUI = new TonConnectUI({
+                                manifestUrl: CONFIG.MANIFEST_URL,
+                                buttonRootId: 'walletContainer'
+                            });
+
+                            tonConnectUI.onStatusChange(async (wallet) => {
+                                if (wallet) {
+                                    state.user.walletAddress = wallet.account.address;
+                                    document.getElementById('profileWallet').textContent = 
+                                        wallet.account.address.slice(0,4) + '...' + wallet.account.address.slice(-4);
+                                    backupToLocalStorage();
+                                    showToast('Wallet connected');
+                                } else {
+                                    state.user.walletAddress = null;
+                                    document.getElementById('profileWallet').textContent = 'not connected';
+                                    backupToLocalStorage();
+                                    showToast('Wallet disconnected');
+                                }
+                                updateButtons();
+                            });
+                        } catch (e) {
+                            console.log('TON Connect error, using fallback button');
+                            // Создаем свою кнопку если TonConnect не работает
+                            const container = document.getElementById('walletContainer');
+                            if (container) {
+                                const btn = document.createElement('button');
+                                btn.className = 'button';
+                                btn.style.margin = '0';
+                                btn.innerHTML = '<img src="https://i.postimg.cc/kXvSQndG/ton.png" width="20"> CONNECT WALLET';
+                                btn.onclick = () => showToast('Wallet connection unavailable');
+                                container.appendChild(btn);
+                            }
+                        }
+                    }, 100);
+
+                    // Загружаем данные из Firebase если есть
+                    if (db) {
+                        try {
+                            const doc = await db.collection('users').doc(state.user.id).get();
+                            if (doc.exists) {
+                                state.user = { ...state.user, ...doc.data() };
                             } else {
-                                await docRef.set(state.user);
+                                await db.collection('users').doc(state.user.id).set(state.user);
                             }
                         } catch (e) {
-                            console.warn('Firestore error, loading from localStorage', e);
-                            loadedFromLocal = recoverFromLocalStorage() !== null;
+                            console.log('Firestore error, using localStorage');
                         }
-                    } else {
-                        loadedFromLocal = recoverFromLocalStorage() !== null;
                     }
 
-                    if (!loadedFromLocal) {
-                        backupToLocalStorage();
-                    }
-
-                    if (state.user.walletAddress) {
-                        updateWalletUI(state.user.walletAddress);
-                    }
-
+                    // Обновляем интерфейс
                     updateUI();
                     loadLeaderboards();
+                    setupEventListeners();
+                    checkDailyReset();
+                    
                 } catch (e) {
-                    console.error('Fatal error in loadUser', e);
-                    showToast('Error loading user data');
-                    updateUI();
-                }
-            }
-
-            // Сохранение пользователя
-            async function saveUser() {
-                try {
-                    if (!db) {
-                        backupToLocalStorage();
-                        return;
-                    }
-
-                    const docRef = db.collection('users').doc(state.user.id);
-                    await docRef.set({
-                        ...state.user,
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    }, { merge: true });
-                    backupToLocalStorage();
-                } catch (e) {
-                    console.log('Save user error:', e);
-                    backupToLocalStorage();
-                }
-            }
-
-            // Проверка сброса дня
-            function checkDailyReset() {
-                const lastDate = localStorage.getItem('lastDate');
-                const today = new Date().toDateString();
-                
-                if (lastDate !== today) {
-                    state.user.viewsToday = 0;
-                    localStorage.setItem('lastDate', today);
-                    saveUser();
+                    console.log('Init error:', e);
+                    showToast('Loading...');
                     updateUI();
                 }
             }
@@ -925,11 +845,10 @@ try {
                 document.getElementById('level2').textContent = state.user.referrals.l2?.length || 0;
                 document.getElementById('level3').textContent = state.user.referrals.l3?.length || 0;
                 
-                const refLink = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
-                document.getElementById('refLink').textContent = refLink;
+                document.getElementById('refLink').textContent = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
                 
                 document.getElementById('profileName').textContent = state.user.name;
-                document.getElementById('profileUsername').textContent = state.user.username ? '@' + state.user.username : '@username';
+                document.getElementById('profileUsername').textContent = '@' + state.user.username;
                 document.getElementById('profileTelegramId').textContent = `ID: ${state.user.id}`;
                 
                 if (state.user.photoUrl) {
@@ -941,11 +860,15 @@ try {
                 document.getElementById('totalViews').textContent = state.user.totalViews;
                 document.getElementById('totalTasks').textContent = state.user.tasksDone;
                 
-                updateWalletUI(state.user.walletAddress);
+                if (state.user.walletAddress) {
+                    const addr = state.user.walletAddress;
+                    document.getElementById('profileWallet').textContent = addr.slice(0,4) + '...' + addr.slice(-4);
+                }
+                
                 updateButtons();
             }
 
-            // Обновление состояния кнопок
+            // Обновление кнопок
             function updateButtons() {
                 const watchBtn = document.getElementById('watchAdBtn');
                 const dailyBtn = document.getElementById('dailyBonusBtn');
@@ -957,13 +880,7 @@ try {
                 }
                 
                 if (dailyBtn) {
-                    const lastBonus = localStorage.getItem('bonus');
-                    const today = new Date().toDateString();
-                    dailyBtn.disabled = lastBonus === today;
-                }
-                
-                if (taskBtn) {
-                    taskBtn.disabled = false;
+                    dailyBtn.disabled = localStorage.getItem('bonus') === new Date().toDateString();
                 }
                 
                 if (withdrawBtn) {
@@ -971,140 +888,100 @@ try {
                 }
             }
 
-            // Обновление UI кошелька
-            function updateWalletUI(address) {
-                const walletEl = document.getElementById('profileWallet');
-                if (walletEl) {
-                    if (address) {
-                        const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                        walletEl.textContent = shortAddr;
-                    } else {
-                        walletEl.textContent = 'not connected';
-                    }
+            // Проверка сброса дня
+            function checkDailyReset() {
+                const lastDate = localStorage.getItem('lastDate');
+                const today = new Date().toDateString();
+                
+                if (lastDate !== today) {
+                    state.user.viewsToday = 0;
+                    localStorage.setItem('lastDate', today);
+                    backupToLocalStorage();
+                    updateUI();
                 }
             }
 
-            // Загрузка лидербордов - ТОЛЬКО НАСТОЯЩИЕ ПОЛЬЗОВАТЕЛИ (есть рефералы ИЛИ баланс > 0)
+            // Загрузка лидербордов
             async function loadLeaderboards() {
-                try {
-                    if (!db) {
-                        showMockLeaderboards();
-                        return;
-                    }
+                if (!db) {
+                    document.getElementById('refLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">loading...</div>';
+                    document.getElementById('earnLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">loading...</div>';
+                    return;
+                }
 
-                    // Получаем всех пользователей
+                try {
                     const snapshot = await db.collection('users').get();
+                    const users = [];
                     
-                    // Фильтруем: только те, у кого есть рефералы (l1.length > 0) ИЛИ баланс > 0
-                    const realUsers = [];
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         const refCount = data.referrals?.l1?.length || 0;
-                        const balance = data.coins || 0;
                         const earned = data.totalEarned || 0;
                         
-                        // Настоящий пользователь: есть рефералы или баланс > 0
-                        if (refCount > 0 || balance > 0 || earned > 0) {
-                            realUsers.push({
-                                id: doc.id,
-                                ...data
-                            });
+                        if (refCount > 0 || earned > 0 || (data.coins || 0) > 0) {
+                            users.push({ id: doc.id, ...data });
                         }
                     });
 
-                    // Реферальный топ (по количеству рефералов)
-                    const refSorted = [...realUsers].sort((a, b) => {
-                        const countA = a.referrals?.l1?.length || 0;
-                        const countB = b.referrals?.l1?.length || 0;
-                        return countB - countA;
-                    }).slice(0, 10);
-
+                    // Реферальный топ
+                    const refSorted = [...users].sort((a,b) => (b.referrals?.l1?.length || 0) - (a.referrals?.l1?.length || 0)).slice(0,10);
                     let refHtml = '';
-                    refSorted.forEach((user, index) => {
-                        const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-                        const displayName = user.name || 'User';
-                        const refCount = user.referrals?.l1?.length || 0;
-                        
+                    refSorted.forEach((user, i) => {
+                        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                         refHtml += `
                             <div class="leaderItem">
-                                <div class="rank ${rankClass}">${index + 1}</div>
-                                <div style="flex:1; color:#fff;">${displayName}</div>
-                                <div style="color:#6C5CE7;">${refCount}</div>
+                                <div class="rank ${rankClass}">${i+1}</div>
+                                <div style="flex:1; color:#fff;">${user.name || 'User'}</div>
+                                <div style="color:#6C5CE7;">${user.referrals?.l1?.length || 0}</div>
                             </div>
                         `;
                     });
-                    
-                    document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no real users yet</div>';
+                    document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no users yet</div>';
 
-                    // Топ по заработку (totalEarned)
-                    const earnSorted = [...realUsers].sort((a, b) => {
-                        const earnedA = a.totalEarned || 0;
-                        const earnedB = b.totalEarned || 0;
-                        return earnedB - earnedA;
-                    }).slice(0, 10);
-
+                    // Топ по заработку
+                    const earnSorted = [...users].sort((a,b) => (b.totalEarned || 0) - (a.totalEarned || 0)).slice(0,10);
                     let earnHtml = '';
-                    earnSorted.forEach((user, index) => {
-                        const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-                        const displayName = user.name || 'User';
-                        const earned = user.totalEarned || 0;
-                        
+                    earnSorted.forEach((user, i) => {
+                        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
                         earnHtml += `
                             <div class="leaderItem">
-                                <div class="rank ${rankClass}">${index + 1}</div>
-                                <div style="flex:1; color:#fff;">${displayName}</div>
-                                <div style="color:#6C5CE7;">${earned}</div>
+                                <div class="rank ${rankClass}">${i+1}</div>
+                                <div style="flex:1; color:#fff;">${user.name || 'User'}</div>
+                                <div style="color:#6C5CE7;">${user.totalEarned || 0}</div>
                             </div>
                         `;
                     });
-                    
-                    document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no real users yet</div>';
+                    document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no users yet</div>';
                     
                 } catch (e) {
                     console.log('Leaderboard error:', e);
-                    showMockLeaderboards();
                 }
-            }
-
-            // Заглушка для лидерборда
-            function showMockLeaderboards() {
-                document.getElementById('refLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">connect to see data</div>';
-                document.getElementById('earnLeaderboard').innerHTML = '<div style="text-align:center; color:#8E9AB0; padding:20px;">connect to see data</div>';
             }
 
             // Просмотр рекламы
             async function watchAd() {
+                if (state.cooldown > 0) return showToast(`Wait ${state.cooldown}s`);
+                if (state.user.viewsToday >= CONFIG.DAILY_LIMIT) return showToast('Daily limit reached');
+                
                 try {
-                    if (state.cooldown > 0) {
-                        showToast(`Wait ${state.cooldown}s`);
-                        return;
+                    if (window.Adsgram) {
+                        const ad = Adsgram.init({ blockId: CONFIG.REWARDED_ID });
+                        await ad.show();
                     }
-                    
-                    if (state.user.viewsToday >= CONFIG.DAILY_LIMIT) {
-                        showToast('Daily limit reached');
-                        return;
-                    }
-
-                    if (!window.Adsgram) {
-                        showToast('Ads not available');
-                        return;
-                    }
-
-                    const ad = window.Adsgram.init({ blockId: CONFIG.REWARDED_ID });
-                    await ad.show();
                     
                     state.user.coins += 10;
                     state.user.viewsToday++;
                     state.user.totalViews++;
                     state.user.totalEarned += 10;
                     
-                    await saveUser();
+                    backupToLocalStorage();
+                    if (db) await db.collection('users').doc(state.user.id).set(state.user, { merge: true });
+                    
                     updateUI();
-                    showToast('+10 coins (≈0.001 TON)');
+                    showToast('+10 coins');
                     startCooldown();
                     
                 } catch (e) {
-                    console.log('Ad error:', e);
                     showToast('Ad failed');
                 }
             }
@@ -1112,7 +989,6 @@ try {
             // Запуск кулдауна
             function startCooldown() {
                 state.cooldown = CONFIG.COOLDOWN;
-                
                 if (state.timer) clearInterval(state.timer);
                 
                 state.timer = setInterval(() => {
@@ -1131,128 +1007,88 @@ try {
                             secondsEl.textContent = state.cooldown;
                         }
                     }
-                    
                     updateButtons();
                 }, 1000);
             }
 
             // Ежедневный бонус
             async function dailyBonus() {
-                try {
-                    const lastBonus = localStorage.getItem('bonus');
-                    const today = new Date().toDateString();
-                    
-                    if (lastBonus === today) {
-                        showToast('Already claimed');
-                        return;
-                    }
-                    
-                    state.user.coins += 25;
-                    state.user.totalEarned += 25;
-                    localStorage.setItem('bonus', today);
-                    
-                    await saveUser();
-                    updateUI();
-                    showToast('+25 coins (≈0.0025 TON)');
-                    
-                } catch (e) {
-                    console.log('Bonus error:', e);
-                    showToast('Bonus failed');
-                }
+                const today = new Date().toDateString();
+                if (localStorage.getItem('bonus') === today) return showToast('Already claimed');
+                
+                state.user.coins += 25;
+                state.user.totalEarned += 25;
+                localStorage.setItem('bonus', today);
+                
+                backupToLocalStorage();
+                if (db) await db.collection('users').doc(state.user.id).set(state.user, { merge: true });
+                
+                updateUI();
+                showToast('+25 coins');
             }
 
-            // Получение задания
+            // Задание
             async function getTask() {
                 try {
-                    if (!window.Adsgram) {
-                        showToast('Tasks not available');
-                        return;
+                    if (window.Adsgram) {
+                        const task = Adsgram.init({ blockId: CONFIG.TASK_ID });
+                        await task.show();
                     }
-
-                    const task = window.Adsgram.init({ blockId: CONFIG.TASK_ID });
-                    await task.show();
                     
                     state.user.coins += 50;
                     state.user.tasksDone++;
                     state.user.totalEarned += 50;
                     
-                    await saveUser();
+                    backupToLocalStorage();
+                    if (db) await db.collection('users').doc(state.user.id).set(state.user, { merge: true });
+                    
                     updateUI();
-                    showToast('+50 coins (≈0.005 TON)');
+                    showToast('+50 coins');
                     
                 } catch (e) {
-                    console.log('Task error:', e);
                     showToast('Task failed');
                 }
             }
 
-            // Вывод средств
+            // Вывод
             async function withdraw() {
-                try {
-                    if (!state.user.walletAddress) {
-                        showToast('Connect wallet first');
-                        return;
-                    }
-                    
-                    if (state.user.coins < CONFIG.MIN_WITHDRAW) {
-                        showToast(`Minimum ${CONFIG.MIN_WITHDRAW} coins`);
-                        return;
-                    }
-                    
-                    showToast('Withdraw requested (demo)');
-                    
-                } catch (e) {
-                    console.log('Withdraw error:', e);
-                    showToast('Withdraw failed');
-                }
+                if (!state.user.walletAddress) return showToast('Connect wallet first');
+                if (state.user.coins < CONFIG.MIN_WITHDRAW) return showToast(`Minimum ${CONFIG.MIN_WITHDRAW} coins`);
+                showToast('Withdraw requested');
             }
 
-            // Копирование ссылки
+            // Копирование
             function copyRefLink() {
                 const link = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(link).then(() => showToast('Copied!'));
-                } else {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = link;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    showToast('Copied!');
-                }
+                navigator.clipboard?.writeText(link) || prompt('Copy link:', link);
+                showToast('Copied!');
             }
 
-            // Поделиться ссылкой
+            // Поделиться
             function shareRefLink() {
-                const text = encodeURIComponent('Join RefTON and earn!');
-                const url = encodeURIComponent(`https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`);
-                window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+                const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/' + CONFIG.BOT_USERNAME + '?start=' + state.user.refCode)}&text=${encodeURIComponent('Join RefTON and earn!')}`;
+                window.open(url, '_blank');
             }
 
-            // Показать уведомление
+            // Тосты
             function showToast(msg) {
                 const toast = document.getElementById('toast');
                 if (toast) {
                     toast.textContent = msg;
                     toast.classList.remove('hidden');
-                    
-                    setTimeout(() => {
-                        toast.classList.add('hidden');
-                    }, 2000);
+                    setTimeout(() => toast.classList.add('hidden'), 2000);
                 }
             }
 
-            // Настройка обработчиков событий
+            // События
             function setupEventListeners() {
                 document.querySelectorAll('.navItem').forEach(item => {
                     item.addEventListener('click', () => {
                         document.querySelectorAll('.navItem').forEach(n => n.classList.remove('active'));
                         item.classList.add('active');
                         
-                        const sectionId = item.dataset.section + 'Section';
                         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                        document.getElementById(sectionId).classList.add('active');
+                        document.getElementById(item.dataset.section + 'Section').classList.add('active');
                     });
                 });
 
@@ -1274,8 +1110,9 @@ try {
                 document.getElementById('withdrawBtn')?.addEventListener('click', withdraw);
             }
 
+            // Старт
             document.addEventListener('DOMContentLoaded', init);
         })();
     </script>
 </body>
-    </html>
+</html>
