@@ -778,39 +778,64 @@
                     };
 
                     // TON Connect
+try {
+    tonConnectUI = new TonConnectUI({
+        manifestUrl: CONFIG.MANIFEST_URL,
+        buttonRootId: 'walletContainer'
+    });
+
+    tonConnectUI.onStatusChange(async (wallet) => {
+        if (wallet) {
+            const address = wallet.account.address;
+            state.user.walletAddress = address;
+            updateWalletUI(address);
+            await saveUser();
+            showToast('Wallet connected');
+        } else {
+            state.user.walletAddress = null;
+            updateWalletUI(null);
+            await saveUser();
+            showToast('Wallet disconnected');
+        }
+    });
+    
+    // ПРОВЕРЯЕМ, ПОЯВИЛАСЬ ЛИ КНОПКА
+    setTimeout(() => {
+        const container = document.getElementById('walletContainer');
+        if (container && container.children.length === 0) {
+            // Если кнопки нет - создаём свою
+            const fallbackBtn = document.createElement('button');
+            fallbackBtn.className = 'button';
+            fallbackBtn.style.margin = '0';
+            fallbackBtn.style.padding = '12px 20px';
+            fallbackBtn.innerHTML = '<img src="https://i.postimg.cc/kXvSQndG/ton.png" width="20"> CONNECT WALLET';
+            
+            fallbackBtn.onclick = async () => {
+                if (tonConnectUI) {
                     try {
-                        tonConnectUI = new TonConnectUI({
-                            manifestUrl: CONFIG.MANIFEST_URL,
-                            buttonRootId: 'walletContainer'
-                        });
-
-                        tonConnectUI.onStatusChange(async (wallet) => {
-                            if (wallet) {
-                                const address = wallet.account.address;
-                                state.user.walletAddress = address;
-                                updateWalletUI(address);
-                                await saveUser();
-                                showToast('Wallet connected');
-                            } else {
-                                state.user.walletAddress = null;
-                                updateWalletUI(null);
-                                await saveUser();
-                                showToast('Wallet disconnected');
-                            }
-                        });
+                        await tonConnectUI.openModal();
                     } catch (e) {
-                        console.log('TON Connect init error:', e);
+                        showToast('Click the TonConnect button below');
+                        // Если не работает - показываем стандартную кнопку TonConnect
+                        if (tonConnectUI.button) {
+                            tonConnectUI.button.style.display = 'block';
+                        }
                     }
-
-                    await loadUser();
-                    setupEventListeners();
-                    checkDailyReset();
-                    
-                } catch (e) {
-                    console.log('Init error:', e);
-                    showToast('Initialization error');
                 }
-            }
+            };
+            
+            container.appendChild(fallbackBtn);
+        }
+    }, 1500);
+    
+} catch (e) {
+    console.log('TON Connect init error:', e);
+    // Если совсем не работает - показываем заглушку
+    const container = document.getElementById('walletContainer');
+    if (container) {
+        container.innerHTML = '<button class="button" style="margin:0; padding:12px" onclick="alert(\'Wallet unavailable\')">⚡ WALLET OFFLINE</button>';
+    }
+}
 
             // Загрузка пользователя
             async function loadUser() {
