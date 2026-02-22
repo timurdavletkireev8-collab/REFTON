@@ -16,6 +16,8 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Убирает синий фон при нажатии на мобильных */
+            outline: none; /* Убирает стандартный outline */
         }
 
         body {
@@ -43,6 +45,7 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 30px;
+            flex-shrink: 0; /* Не сжимается */
         }
 
         .logo {
@@ -80,6 +83,7 @@
         .balanceBlock {
             text-align: center;
             margin-bottom: 40px;
+            flex-shrink: 0; /* Не сжимается */
         }
 
         .balanceBig {
@@ -108,13 +112,13 @@
             filter: drop-shadow(0 0 5px #6C5CE7);
         }
 
-        /* Контент по центру */
+        /* Контент занимает всё оставшееся место */
         .contentContainer {
-            flex: 1;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin-bottom: 20px;
+            min-height: 0; /* Важно для flex-контейнера */
         }
 
         .section {
@@ -190,7 +194,7 @@
             display: block;
         }
 
-        /* Кнопки */
+        /* Кнопки (без синего фона) */
         .button {
             background: linear-gradient(135deg, #6C5CE7, #00D2FF);
             border: none;
@@ -208,11 +212,13 @@
             gap: 10px;
             box-shadow: 0 8px 20px rgba(108,92,231,0.4);
             transition: transform 0.15s, box-shadow 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .button:active {
             transform: scale(0.98);
             box-shadow: 0 4px 12px rgba(108,92,231,0.6);
+            /* Нет изменения фона */
         }
 
         .buttonOutline {
@@ -225,6 +231,7 @@
         .buttonOutline:active {
             background: rgba(108,92,231,0.1);
             transform: scale(0.98);
+            /* Нет синего фона */
         }
 
         .button img {
@@ -234,7 +241,7 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
-        /* Нижнее меню — крупное, яркое */
+        /* Нижнее меню — зафиксировано внизу */
         .navBar {
             display: flex;
             justify-content: space-around;
@@ -244,7 +251,8 @@
             border-radius: 50px;
             border: 1px solid rgba(108,92,231,0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-top: auto;
+            flex-shrink: 0; /* Не сжимается */
+            width: 100%;
         }
 
         .navItem {
@@ -258,6 +266,7 @@
             color: #8E9AB0;
             cursor: pointer;
             transition: background 0.2s, color 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .navItem.active {
@@ -271,7 +280,7 @@
             height: 28px;
             display: block;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            transition: none; /* убираем изменение прозрачности */
+            transition: none; /* Без изменения прозрачности */
         }
 
         .navItem.active .navIconImg {
@@ -393,7 +402,7 @@
 </head>
 <body>
     <div class="app">
-        <!-- Шапка -->
+        <!-- Шапка (фиксирована) -->
         <div class="header">
             <div class="logo">REF TON</div>
             <div class="miniBalance">
@@ -402,7 +411,7 @@
             </div>
         </div>
 
-        <!-- Баланс -->
+        <!-- Баланс (фиксирован) -->
         <div class="balanceBlock">
             <div class="balanceBig" id="bigCoins">0</div>
             <div class="balanceTon">
@@ -411,7 +420,7 @@
             </div>
         </div>
 
-        <!-- Контент по центру -->
+        <!-- Контент (растягивается, центрируется) -->
         <div class="contentContainer">
             <!-- ADS -->
             <div id="adsSection" class="section active">
@@ -432,8 +441,9 @@
                         ⏱️ <span id="timerSeconds">0</span>s
                     </div>
 
+                    <!-- Кнопка с новой иконкой playback.png -->
                     <button class="button" id="watchAdBtn">
-                        <img src="https://i.postimg.cc/7LDLPzrl/rewind.png" alt="watch">
+                        <img src="https://i.postimg.cc/NGTm06JY/playback.png" alt="watch">
                         watch ad — 100
                     </button>
 
@@ -538,7 +548,7 @@
             </div>
         </div>
 
-        <!-- Нижнее меню (увеличенное) -->
+        <!-- Нижнее меню (зафиксировано) -->
         <div class="navBar">
             <div class="navItem active" data-section="ads">
                 <img src="https://i.postimg.cc/ZnmB1ghx/ads-1.png" class="navIconImg" alt="ads">
