@@ -9,7 +9,6 @@
     <script src="https://sdk.adsgram.ai/js/adsgram.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <!-- TON Connect UI -->
     <script src="https://unpkg.com/@tonconnect/ui@2.0.0/dist/tonconnect-ui.min.js"></script>
     
     <style>
@@ -17,9 +16,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            outline: none;
         }
 
         body {
@@ -39,6 +37,7 @@
             display: flex;
             flex-direction: column;
             background: #0A0C15;
+            position: relative;
         }
 
         .header {
@@ -55,7 +54,6 @@
             background: linear-gradient(135deg, #6C5CE7, #00D2FF);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(108,92,231,0.3);
         }
 
         .miniBalance {
@@ -68,16 +66,11 @@
             gap: 8px;
             font-size: 15px;
             border: 1px solid rgba(108,92,231,0.4);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .miniBalance span:first-child {
             color: #6C5CE7;
             font-weight: 600;
-        }
-
-        .miniBalance span:last-child {
-            color: #A0A7B5;
         }
 
         .balanceBlock {
@@ -94,7 +87,6 @@
             background: linear-gradient(135deg, #FFFFFF, #C0D4FF);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(108,92,231,0.5);
         }
 
         .balanceTon {
@@ -110,33 +102,25 @@
         .balanceTon img {
             width: 20px;
             height: 20px;
-            filter: drop-shadow(0 0 5px #6C5CE7);
         }
 
         #walletContainer {
             margin-top: 12px;
             display: flex;
             justify-content: center;
-        }
-
-        .walletAddress {
-            background: rgba(108,92,231,0.1);
-            border: 1px solid rgba(108,92,231,0.3);
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-size: 14px;
-            color: #A0A7B5;
-            display: inline-block;
+            min-height: 40px;
         }
 
         .contentContainer {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; /* изменено с center на flex-start */
-            min-height: 0;
-            overflow-y: auto; /* добавим прокрутку при необходимости */
+            flex: 1;
+            overflow-y: auto;
             padding-bottom: 10px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .contentContainer::-webkit-scrollbar {
+            display: none;
         }
 
         .section {
@@ -154,7 +138,6 @@
             border-radius: 32px;
             padding: 24px 20px;
             border: 1px solid rgba(108,92,231,0.3);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             margin-bottom: 10px;
         }
 
@@ -183,7 +166,6 @@
             font-size: 22px;
             font-weight: 600;
             color: #6C5CE7;
-            text-shadow: 0 0 10px rgba(108,92,231,0.5);
         }
 
         .statsLabel {
@@ -202,13 +184,11 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #1E2430, #2A2F3A);
-            box-shadow: 0 5px 15px rgba(108,92,231,0.2);
         }
 
         .levelBadge img {
             width: 28px;
             height: 28px;
-            display: block;
         }
 
         .button {
@@ -226,35 +206,29 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 8px 20px rgba(108,92,231,0.4);
-            transition: transform 0.15s, box-shadow 0.15s;
+            transition: opacity 0.15s;
         }
 
         .button:active {
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(108,92,231,0.6);
+            opacity: 0.8;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .buttonOutline {
             background: transparent;
             border: 2px solid rgba(108,92,231,0.5);
-            box-shadow: none;
             color: #fff;
-        }
-
-        .buttonOutline:active {
-            background: rgba(108,92,231,0.1);
-            transform: scale(0.98);
         }
 
         .button img {
             width: 20px;
             height: 20px;
-            display: block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
-        /* Новые стили для вкладок рейтинга */
         .tabBar {
             display: flex;
             gap: 8px;
@@ -297,7 +271,6 @@
             padding: 12px 8px;
             border-radius: 50px;
             border: 1px solid rgba(108,92,231,0.4);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             flex-shrink: 0;
             width: 100%;
             margin-top: 10px;
@@ -313,30 +286,22 @@
             border-radius: 40px;
             color: #8E9AB0;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: 0.2s;
         }
 
         .navItem.active {
             background: linear-gradient(135deg, rgba(108,92,231,0.2), rgba(0,210,255,0.1));
             color: #fff;
-            box-shadow: 0 0 15px rgba(108,92,231,0.3);
         }
 
         .navIconImg {
             width: 28px;
             height: 28px;
-            display: block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-
-        .navItem.active .navIconImg {
-            filter: drop-shadow(0 0 8px #6C5CE7);
         }
 
         .navLabel {
             font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.3px;
         }
 
         .refLink {
@@ -348,10 +313,11 @@
             word-break: break-all;
             margin: 20px 0;
             color: #A0A7B5;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .hidden { display: none; }
+        .hidden {
+            display: none !important;
+        }
 
         .toast {
             position: fixed;
@@ -367,7 +333,6 @@
             text-align: center;
             color: #fff;
             font-weight: 500;
-            box-shadow: 0 10px 30px rgba(108,92,231,0.3);
             z-index: 1000;
         }
 
@@ -390,7 +355,6 @@
             background: rgba(15,20,30,0.6);
             margin-bottom: 8px;
             border: 1px solid rgba(108,92,231,0.2);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .rank {
@@ -404,8 +368,12 @@
             color: #fff;
             font-weight: 600;
             font-size: 14px;
-            box-shadow: 0 4px 10px rgba(108,92,231,0.4);
+            flex-shrink: 0;
         }
+
+        .rank.gold { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank.silver { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+        .rank.bronze { background: linear-gradient(135deg, #CD7F32, #B87333); }
 
         .avatar {
             width: 70px;
@@ -417,7 +385,6 @@
             justify-content: center;
             font-size: 36px;
             margin: 0 auto 16px;
-            box-shadow: 0 10px 25px rgba(108,92,231,0.5);
             overflow: hidden;
         }
 
@@ -442,6 +409,22 @@
             color: #8E9AB0;
             text-align: center;
             margin-bottom: 24px;
+        }
+
+        .withdraw-btn {
+            margin-top: 20px;
+        }
+
+        .loader {
+            text-align: center;
+            color: #8E9AB0;
+            padding: 20px;
+        }
+
+        .error-text {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 20px;
         }
     </style>
 </head>
@@ -478,7 +461,7 @@
                             <div class="statsLabel">today</div>
                         </div>
                         <div>
-                            <div class="statsValue">12</div>
+                            <div class="statsValue" id="dailyLimit">12</div>
                             <div class="statsLabel">limit</div>
                         </div>
                     </div>
@@ -544,7 +527,7 @@
                 </div>
             </div>
 
-            <!-- TOP (с вкладками) -->
+            <!-- TOP -->
             <div id="topSection" class="section">
                 <div class="card" style="padding: 20px;">
                     <div class="tabBar">
@@ -552,17 +535,15 @@
                         <div class="tabItem" data-tab="earnTab">EARNINGS</div>
                     </div>
                     <div id="refTab" class="tabContent active">
-                        <!-- Здесь будет реферальный топ (обновляется еженедельно) -->
                         <div id="refLeaderboard"></div>
                     </div>
                     <div id="earnTab" class="tabContent">
-                        <!-- Здесь будет топ по заработку (обновляется еженедельно) -->
                         <div id="earnLeaderboard"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- PROFILE (без рангов, с ID, фото, username и кнопкой вывода) -->
+            <!-- PROFILE -->
             <div id="profileSection" class="section">
                 <div class="card">
                     <div class="avatar" id="profileAvatar">👤</div>
@@ -591,8 +572,7 @@
                         <span class="statsValue" id="profileWallet">not connected</span>
                     </div>
                     
-                    <!-- Кнопка вывода (требует подключенного кошелька) -->
-                    <button class="button" id="withdrawBtn" style="margin-top: 20px;">
+                    <button class="button withdraw-btn" id="withdrawBtn">
                         <img src="https://i.postimg.cc/kXvSQndG/ton.png" alt="TON" style="width: 20px;">
                         withdraw
                     </button>
@@ -628,331 +608,510 @@
     <div id="toast" class="toast hidden"></div>
 
     <script>
-        // ===== FIREBASE =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyD2DVmirNOr3QYMTNmosl0SQYl_4fwTqfQ",
-            authDomain: "refton-352c8.firebaseapp.com",
-            projectId: "refton-352c8",
-            storageBucket: "refton-352c8.firebasestorage.app",
-            messagingSenderId: "230777778425",
-            appId: "1:230777778425:web:deac18f7ba13e5cf5cb228"
-        };
-        
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const tg = window.Telegram?.WebApp;
-        if (tg) { tg.ready(); tg.expand(); }
+        (function() {
+            // Конфигурация
+            const CONFIG = {
+                BOT_USERNAME: 'RefTON_bot',
+                REWARDED_ID: '23154',
+                TASK_ID: '23158',
+                DAILY_LIMIT: 12,
+                COOLDOWN: 35,
+                COIN_TO_TON: 0.00001,
+                MIN_WITHDRAW: 10000,
+                MANIFEST_URL: 'https://your-domain.com/tonconnect-manifest.json'
+            };
 
-        const TG_USER = tg?.initDataUnsafe?.user || { 
-            id: Date.now(), 
-            first_name: 'User',
-            username: 'username',
-            photo_url: null
-        };
-        const BOT_USERNAME = 'RefTON_bot'; // ЗАМЕНИТЬ
-        const REWARDED_ID = '23154';
-        const TASK_ID = '23158';
-        const DAILY_LIMIT = 12;
-        const COOLDOWN = 35;
-        const COIN_TO_TON = 0.00001; // 100 монет = 0.001 TON
+            // Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyD2DVmirNOr3QYMTNmosl0SQYl_4fwTqfQ",
+                authDomain: "refton-352c8.firebaseapp.com",
+                projectId: "refton-352c8",
+                storageBucket: "refton-352c8.firebasestorage.app",
+                messagingSenderId: "230777778425",
+                appId: "1:230777778425:web:deac18f7ba13e5cf5cb228"
+            };
 
-        // ===== TON CONNECT =====
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://your-domain.com/tonconnect-manifest.json', // ЗАМЕНИТЬ
-            buttonRootId: 'walletContainer'
-        });
+            let db;
+            let tonConnectUI;
+            let tg;
 
-        // ===== STATE =====
-        let state = {
-            user: {
-                id: TG_USER.id.toString(),
-                name: TG_USER.first_name,
-                username: TG_USER.username || 'username',
-                photoUrl: TG_USER.photo_url,
-                coins: 0,
-                refCode: `${TG_USER.id}_${Math.random().toString(36).substring(2,8)}`,
-                referrals: { l1: [], l2: [], l3: [] },
-                viewsToday: 0,
-                totalViews: 0,
-                totalEarned: 0,
-                tasksDone: 0,
-                joined: new Date().toISOString().split('T')[0],
-                walletAddress: null
-            },
-            cooldown: 0,
-            timer: null
-        };
+            // Состояние
+            let state = {
+                user: {
+                    id: '',
+                    name: 'User',
+                    username: 'username',
+                    photoUrl: null,
+                    coins: 0,
+                    refCode: '',
+                    referrals: { l1: [], l2: [], l3: [] },
+                    viewsToday: 0,
+                    totalViews: 0,
+                    totalEarned: 0,
+                    tasksDone: 0,
+                    joined: '',
+                    walletAddress: null
+                },
+                cooldown: 0,
+                timer: null
+            };
 
-        // ===== ЗАГРУЗКА =====
-        async function loadUser() {
-            try {
-                const doc = db.collection('users').doc(state.user.id);
-                const snap = await doc.get();
-                
-                if (snap.exists) {
-                    const data = snap.data();
-                    state.user = { ...state.user, ...data };
+            // Инициализация
+            async function init() {
+                try {
+                    // Telegram
+                    tg = window.Telegram?.WebApp;
+                    if (tg) {
+                        tg.ready();
+                        tg.expand();
+                    }
+
+                    // Firebase
+                    firebase.initializeApp(firebaseConfig);
+                    db = firebase.firestore();
+
+                    // Пользовательские данные
+                    const tgUser = tg?.initDataUnsafe?.user || { 
+                        id: Date.now(), 
+                        first_name: 'User',
+                        username: 'username',
+                        photo_url: null
+                    };
+
+                    state.user = {
+                        ...state.user,
+                        id: tgUser.id.toString(),
+                        name: tgUser.first_name,
+                        username: tgUser.username || 'username',
+                        photoUrl: tgUser.photo_url,
+                        refCode: `${tgUser.id}_${Math.random().toString(36).substring(2,8)}`,
+                        joined: new Date().toISOString().split('T')[0]
+                    };
+
+                    // TON Connect
+                    try {
+                        tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                            manifestUrl: CONFIG.MANIFEST_URL,
+                            buttonRootId: 'walletContainer'
+                        });
+
+                        tonConnectUI.onStatusChange(async (wallet) => {
+                            if (wallet) {
+                                const address = wallet.account.address;
+                                state.user.walletAddress = address;
+                                updateWalletUI(address);
+                                await saveUser();
+                                showToast('Wallet connected');
+                            } else {
+                                state.user.walletAddress = null;
+                                updateWalletUI(null);
+                                await saveUser();
+                                showToast('Wallet disconnected');
+                            }
+                        });
+                    } catch (e) {
+                        console.log('TON Connect init error:', e);
+                    }
+
+                    await loadUser();
+                    setupEventListeners();
+                    checkDailyReset();
                     
-                    if (state.user.walletAddress) {
-                        updateWalletUI(state.user.walletAddress);
-                    }
+                } catch (e) {
+                    console.log('Init error:', e);
+                    showToast('Initialization error');
+                }
+            }
 
-                    const last = localStorage.getItem('lastDate');
+            // Загрузка пользователя
+            async function loadUser() {
+                try {
+                    const docRef = db.collection('users').doc(state.user.id);
+                    const snap = await docRef.get();
+                    
+                    if (snap.exists) {
+                        const data = snap.data();
+                        state.user = { ...state.user, ...data };
+                        
+                        if (state.user.walletAddress) {
+                            updateWalletUI(state.user.walletAddress);
+                        }
+                    } else {
+                        await docRef.set(state.user);
+                    }
+                    
+                    updateUI();
+                    loadLeaderboards();
+                    
+                } catch (e) {
+                    console.log('Load user error:', e);
+                    showToast('Error loading user data');
+                }
+            }
+
+            // Сохранение пользователя
+            async function saveUser() {
+                try {
+                    const docRef = db.collection('users').doc(state.user.id);
+                    await docRef.set({
+                        ...state.user,
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                } catch (e) {
+                    console.log('Save user error:', e);
+                }
+            }
+
+            // Проверка сброса дня
+            function checkDailyReset() {
+                const lastDate = localStorage.getItem('lastDate');
+                const today = new Date().toDateString();
+                
+                if (lastDate !== today) {
+                    state.user.viewsToday = 0;
+                    localStorage.setItem('lastDate', today);
+                    saveUser();
+                }
+            }
+
+            // Обновление UI
+            function updateUI() {
+                // Баланс
+                document.getElementById('bigCoins').textContent = state.user.coins;
+                document.getElementById('miniCoins').textContent = state.user.coins;
+                
+                const tonValue = (state.user.coins * CONFIG.COIN_TO_TON).toFixed(4);
+                document.getElementById('bigTon').textContent = tonValue;
+                document.getElementById('miniUsd').textContent = `≈ ${tonValue} TON`;
+                
+                // Статистика
+                document.getElementById('todayViews').textContent = state.user.viewsToday;
+                document.getElementById('dailyLimit').textContent = CONFIG.DAILY_LIMIT;
+                document.getElementById('tasksDone').textContent = state.user.tasksDone;
+                
+                // Рефералы
+                document.getElementById('level1').textContent = state.user.referrals.l1?.length || 0;
+                document.getElementById('level2').textContent = state.user.referrals.l2?.length || 0;
+                document.getElementById('level3').textContent = state.user.referrals.l3?.length || 0;
+                
+                const refLink = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
+                document.getElementById('refLink').textContent = refLink;
+                
+                // Профиль
+                document.getElementById('profileName').textContent = state.user.name;
+                document.getElementById('profileUsername').textContent = state.user.username ? '@' + state.user.username : '@username';
+                document.getElementById('profileTelegramId').textContent = `ID: ${state.user.id}`;
+                
+                if (state.user.photoUrl) {
+                    document.getElementById('profileAvatar').innerHTML = `<img src="${state.user.photoUrl}" alt="avatar">`;
+                }
+                
+                document.getElementById('totalEarned').textContent = state.user.totalEarned;
+                document.getElementById('totalRefs').textContent = state.user.referrals.l1?.length || 0;
+                document.getElementById('totalViews').textContent = state.user.totalViews;
+                document.getElementById('totalTasks').textContent = state.user.tasksDone;
+                
+                updateWalletUI(state.user.walletAddress);
+                
+                // Обновление кнопок
+                updateButtons();
+            }
+
+            // Обновление состояния кнопок
+            function updateButtons() {
+                const watchBtn = document.getElementById('watchAdBtn');
+                const dailyBtn = document.getElementById('dailyBonusBtn');
+                const taskBtn = document.getElementById('taskBtn');
+                const withdrawBtn = document.getElementById('withdrawBtn');
+                
+                if (watchBtn) {
+                    watchBtn.disabled = state.user.viewsToday >= CONFIG.DAILY_LIMIT || state.cooldown > 0;
+                }
+                
+                if (dailyBtn) {
+                    const lastBonus = localStorage.getItem('bonus');
                     const today = new Date().toDateString();
-                    if (last !== today) {
-                        state.user.viewsToday = 0;
-                        localStorage.setItem('lastDate', today);
-                        await saveUser();
+                    dailyBtn.disabled = lastBonus === today;
+                }
+                
+                if (taskBtn) {
+                    taskBtn.disabled = false;
+                }
+                
+                if (withdrawBtn) {
+                    withdrawBtn.disabled = !state.user.walletAddress || state.user.coins < CONFIG.MIN_WITHDRAW;
+                }
+            }
+
+            // Обновление UI кошелька
+            function updateWalletUI(address) {
+                const walletEl = document.getElementById('profileWallet');
+                if (walletEl) {
+                    if (address) {
+                        const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
+                        walletEl.textContent = shortAddr;
+                    } else {
+                        walletEl.textContent = 'not connected';
                     }
-                } else {
-                    await doc.set(state.user);
                 }
-                updateUI();
-                loadLeaderboards();
-            } catch (e) {
-                console.log('loadUser error', e);
             }
-        }
 
-        async function saveUser() {
-            try {
-                await db.collection('users').doc(state.user.id).set({
-                    ...state.user,
-                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch (e) {
-                console.log('saveUser error', e);
-            }
-        }
+            // Загрузка лидербордов
+            async function loadLeaderboards() {
+                try {
+                    // Реферальный топ
+                    const refSnapshot = await db.collection('users')
+                        .orderBy('referrals.l1', 'desc')
+                        .limit(10)
+                        .get();
+                    
+                    let refHtml = '';
+                    let refIndex = 0;
+                    
+                    refSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const rankClass = refIndex === 0 ? 'gold' : refIndex === 1 ? 'silver' : refIndex === 2 ? 'bronze' : '';
+                        
+                        refHtml += `
+                            <div class="leaderItem">
+                                <div class="rank ${rankClass}">${refIndex + 1}</div>
+                                <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
+                                <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
+                            </div>
+                        `;
+                        refIndex++;
+                    });
+                    
+                    document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
 
-        // ===== TON CONNECT =====
-        tonConnectUI.onStatusChange(async (wallet) => {
-            if (wallet) {
-                const address = wallet.account.address;
-                state.user.walletAddress = address;
-                updateWalletUI(address);
-                await saveUser();
-                showToast('Wallet connected');
-            } else {
-                state.user.walletAddress = null;
-                updateWalletUI(null);
-                await saveUser();
-                showToast('Wallet disconnected');
-            }
-        });
+                    // Топ по заработку
+                    const earnSnapshot = await db.collection('users')
+                        .orderBy('totalEarned', 'desc')
+                        .limit(10)
+                        .get();
+                    
+                    let earnHtml = '';
+                    let earnIndex = 0;
+                    
+                    earnSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const rankClass = earnIndex === 0 ? 'gold' : earnIndex === 1 ? 'silver' : earnIndex === 2 ? 'bronze' : '';
+                        
+                        earnHtml += `
+                            <div class="leaderItem">
+                                <div class="rank ${rankClass}">${earnIndex + 1}</div>
+                                <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
+                                <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
+                            </div>
+                        `;
+                        earnIndex++;
+                    });
+                    
+                    document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0; padding:20px;">no data</div>';
 
-        function updateWalletUI(address) {
-            if (address) {
-                const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                // Обновляем контейнер кнопки (TON Connect сам управляет)
-                // и строку в профиле
-                document.getElementById('profileWallet').textContent = shortAddr;
-            } else {
-                document.getElementById('profileWallet').textContent = 'not connected';
-            }
-        }
-
-        // ===== ВЫВОД СРЕДСТВ =====
-        async function withdraw() {
-            if (!state.user.walletAddress) {
-                showToast('Connect wallet first');
-                return;
-            }
-            if (state.user.coins < 10000) { // минимальная сумма вывода, например 10000 монет
-                showToast('Minimum 10000 coins');
-                return;
-            }
-            
-            try {
-                // Здесь будет вызов TON Connect для отправки транзакции
-                // В демо просто покажем уведомление
-                showToast('Withdraw requested (demo)');
-                // В реальном проекте: создаём транзакцию и отправляем через tonConnectUI.sendTransaction()
-            } catch (e) {
-                showToast('Withdraw failed');
-            }
-        }
-
-        // ===== ЗАГРУЗКА ТОПОВ (еженедельное обновление) =====
-        async function loadLeaderboards() {
-            try {
-                // Топ по рефералам (за последние 7 дней)
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                
-                const refSnap = await db.collection('users')
-                    .orderBy('referrals.l1', 'desc')
-                    .limit(10)
-                    .get();
-                
-                let refHtml = '';
-                refSnap.forEach((doc, i) => {
-                    const data = doc.data();
-                    refHtml += `
-                        <div class="leaderItem">
-                            <div class="rank">${i+1}</div>
-                            <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
-                            <div style="color:#6C5CE7;">${data.referrals?.l1?.length || 0}</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('refLeaderboard').innerHTML = refHtml || '<div style="text-align:center; color:#8E9AB0;">no data</div>';
-
-                // Топ по заработку (за всё время, можно добавить фильтр по дате)
-                const earnSnap = await db.collection('users')
-                    .orderBy('totalEarned', 'desc')
-                    .limit(10)
-                    .get();
-                
-                let earnHtml = '';
-                earnSnap.forEach((doc, i) => {
-                    const data = doc.data();
-                    earnHtml += `
-                        <div class="leaderItem">
-                            <div class="rank">${i+1}</div>
-                            <div style="flex:1; color:#fff;">${data.name || 'User'}</div>
-                            <div style="color:#6C5CE7;">${data.totalEarned || 0}</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('earnLeaderboard').innerHTML = earnHtml || '<div style="text-align:center; color:#8E9AB0;">no data</div>';
-
-            } catch (e) {
-                console.log('leaderboard error', e);
-            }
-        }
-
-        // ===== ОСТАЛЬНЫЕ ФУНКЦИИ (watchAd, dailyBonus, getTask, updateUI и т.д.) =====
-        async function watchAd() {
-            if (state.cooldown > 0) { showToast(`wait ${state.cooldown}s`); return; }
-            if (state.user.viewsToday >= DAILY_LIMIT) { showToast('daily limit'); return; }
-            try {
-                const ad = window.Adsgram.init({ blockId: REWARDED_ID });
-                await ad.show();
-                state.user.coins += 100;
-                state.user.viewsToday++;
-                state.user.totalViews++;
-                state.user.totalEarned += 100;
-                await saveUser();
-                updateUI();
-                showToast('+100 (≈0.001 TON)');
-                startCooldown();
-            } catch { showToast('ad failed'); }
-        }
-
-        function startCooldown() {
-            state.cooldown = COOLDOWN;
-            if (state.timer) clearInterval(state.timer);
-            state.timer = setInterval(() => {
-                state.cooldown--;
-                if (state.cooldown <= 0) {
-                    clearInterval(state.timer);
-                    state.timer = null;
+                } catch (e) {
+                    console.log('Leaderboard error:', e);
                 }
-                document.getElementById('cooldownTimer').classList.toggle('hidden', state.cooldown <= 0);
-                document.getElementById('timerSeconds').textContent = state.cooldown;
-            }, 1000);
-        }
-
-        async function dailyBonus() {
-            const last = localStorage.getItem('bonus');
-            const today = new Date().toDateString();
-            if (last === today) { showToast('already claimed'); return; }
-            state.user.coins += 50;
-            localStorage.setItem('bonus', today);
-            await saveUser();
-            updateUI();
-            showToast('+50 (≈0.0005 TON)');
-        }
-
-        async function getTask() {
-            try {
-                const task = window.Adsgram.init({ blockId: TASK_ID });
-                await task.show();
-                const reward = Math.floor(Math.random() * 400) + 100;
-                state.user.coins += reward;
-                state.user.tasksDone++;
-                await saveUser();
-                updateUI();
-                showToast(`+${reward} (≈${(reward*COIN_TO_TON).toFixed(4)} TON)`);
-            } catch { showToast('task failed'); }
-        }
-
-        function updateUI() {
-            document.getElementById('bigCoins').textContent = state.user.coins;
-            document.getElementById('miniCoins').textContent = state.user.coins;
-            const tonValue = (state.user.coins * COIN_TO_TON).toFixed(4);
-            document.getElementById('bigTon').textContent = tonValue;
-            document.getElementById('miniUsd').textContent = `≈ ${tonValue} TON`;
-            document.getElementById('todayViews').textContent = state.user.viewsToday;
-            document.getElementById('tasksDone').textContent = state.user.tasksDone;
-            document.getElementById('level1').textContent = state.user.referrals.l1.length;
-            document.getElementById('level2').textContent = state.user.referrals.l2.length;
-            document.getElementById('level3').textContent = state.user.referrals.l3.length;
-            document.getElementById('refLink').textContent = `https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`;
-            
-            // Profile info
-            document.getElementById('profileName').textContent = state.user.name;
-            document.getElementById('profileUsername').textContent = state.user.username ? '@' + state.user.username : '@username';
-            document.getElementById('profileTelegramId').textContent = `ID: ${state.user.id}`;
-            if (state.user.photoUrl) {
-                document.getElementById('profileAvatar').innerHTML = `<img src="${state.user.photoUrl}" alt="avatar">`;
-            } else {
-                document.getElementById('profileAvatar').innerHTML = '👤';
             }
-            
-            document.getElementById('totalEarned').textContent = state.user.totalEarned;
-            document.getElementById('totalRefs').textContent = state.user.referrals.l1.length;
-            document.getElementById('totalViews').textContent = state.user.totalViews;
-            document.getElementById('totalTasks').textContent = state.user.tasksDone;
-            
-            updateWalletUI(state.user.walletAddress);
-        }
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 2000);
-        }
+            // Просмотр рекламы
+            async function watchAd() {
+                try {
+                    if (state.cooldown > 0) {
+                        showToast(`Wait ${state.cooldown}s`);
+                        return;
+                    }
+                    
+                    if (state.user.viewsToday >= CONFIG.DAILY_LIMIT) {
+                        showToast('Daily limit reached');
+                        return;
+                    }
 
-        // ===== НАВИГАЦИЯ =====
-        document.querySelectorAll('.navItem').forEach(item => {
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.navItem').forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(item.dataset.section + 'Section').classList.add('active');
-            });
-        });
+                    if (!window.Adsgram) {
+                        showToast('Ads not available');
+                        return;
+                    }
 
-        // ===== ВКЛАДКИ TOP =====
-        document.querySelectorAll('.tabItem').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tabItem').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                document.querySelectorAll('.tabContent').forEach(c => c.classList.remove('active'));
-                document.getElementById(tab.dataset.tab).classList.add('active');
-            });
-        });
+                    const ad = window.Adsgram.init({ blockId: CONFIG.REWARDED_ID });
+                    await ad.show();
+                    
+                    state.user.coins += 100;
+                    state.user.viewsToday++;
+                    state.user.totalViews++;
+                    state.user.totalEarned += 100;
+                    
+                    await saveUser();
+                    updateUI();
+                    showToast('+100 (≈0.001 TON)');
+                    startCooldown();
+                    
+                } catch (e) {
+                    console.log('Ad error:', e);
+                    showToast('Ad failed');
+                }
+            }
 
-        // ===== КНОПКИ =====
-        document.getElementById('watchAdBtn').addEventListener('click', watchAd);
-        document.getElementById('dailyBonusBtn').addEventListener('click', dailyBonus);
-        document.getElementById('taskBtn').addEventListener('click', getTask);
-        document.getElementById('copyBtn').addEventListener('click', () => {
-            navigator.clipboard.writeText(`https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`);
-            showToast('copied');
-        });
-        document.getElementById('shareBtn').addEventListener('click', () => {
-            const text = encodeURIComponent('join RefTON');
-            const url = encodeURIComponent(`https://t.me/${BOT_USERNAME}?start=${state.user.refCode}`);
-            window.open(`https://t.me/share/url?url=${url}&text=${text}`);
-        });
-        document.getElementById('withdrawBtn').addEventListener('click', withdraw);
+            // Запуск кулдауна
+            function startCooldown() {
+                state.cooldown = CONFIG.COOLDOWN;
+                
+                if (state.timer) clearInterval(state.timer);
+                
+                state.timer = setInterval(() => {
+                    state.cooldown--;
+                    
+                    const timerEl = document.getElementById('cooldownTimer');
+                    const secondsEl = document.getElementById('timerSeconds');
+                    
+                    if (timerEl && secondsEl) {
+                        if (state.cooldown <= 0) {
+                            clearInterval(state.timer);
+                            state.timer = null;
+                            timerEl.classList.add('hidden');
+                        } else {
+                            timerEl.classList.remove('hidden');
+                            secondsEl.textContent = state.cooldown;
+                        }
+                    }
+                    
+                    updateButtons();
+                }, 1000);
+            }
 
-        // ===== СТАРТ =====
-        loadUser();
+            // Ежедневный бонус
+            async function dailyBonus() {
+                try {
+                    const lastBonus = localStorage.getItem('bonus');
+                    const today = new Date().toDateString();
+                    
+                    if (lastBonus === today) {
+                        showToast('Already claimed');
+                        return;
+                    }
+                    
+                    state.user.coins += 50;
+                    localStorage.setItem('bonus', today);
+                    
+                    await saveUser();
+                    updateUI();
+                    showToast('+50 (≈0.0005 TON)');
+                    
+                } catch (e) {
+                    console.log('Bonus error:', e);
+                    showToast('Bonus failed');
+                }
+            }
+
+            // Получение задания
+            async function getTask() {
+                try {
+                    if (!window.Adsgram) {
+                        showToast('Tasks not available');
+                        return;
+                    }
+
+                    const task = window.Adsgram.init({ blockId: CONFIG.TASK_ID });
+                    await task.show();
+                    
+                    const reward = Math.floor(Math.random() * 400) + 100;
+                    state.user.coins += reward;
+                    state.user.tasksDone++;
+                    
+                    await saveUser();
+                    updateUI();
+                    showToast(`+${reward} (≈${(reward * CONFIG.COIN_TO_TON).toFixed(4)} TON)`);
+                    
+                } catch (e) {
+                    console.log('Task error:', e);
+                    showToast('Task failed');
+                }
+            }
+
+            // Вывод средств
+            async function withdraw() {
+                try {
+                    if (!state.user.walletAddress) {
+                        showToast('Connect wallet first');
+                        return;
+                    }
+                    
+                    if (state.user.coins < CONFIG.MIN_WITHDRAW) {
+                        showToast(`Minimum ${CONFIG.MIN_WITHDRAW} coins`);
+                        return;
+                    }
+                    
+                    showToast('Withdraw requested (demo)');
+                    
+                } catch (e) {
+                    console.log('Withdraw error:', e);
+                    showToast('Withdraw failed');
+                }
+            }
+
+            // Копирование ссылки
+            function copyRefLink() {
+                const link = `https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`;
+                navigator.clipboard.writeText(link);
+                showToast('Copied!');
+            }
+
+            // Поделиться ссылкой
+            function shareRefLink() {
+                const text = encodeURIComponent('Join RefTON and earn!');
+                const url = encodeURIComponent(`https://t.me/${CONFIG.BOT_USERNAME}?start=${state.user.refCode}`);
+                window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+            }
+
+            // Показать уведомление
+            function showToast(msg) {
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.textContent = msg;
+                    toast.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 2000);
+                }
+            }
+
+            // Настройка обработчиков событий
+            function setupEventListeners() {
+                // Навигация
+                document.querySelectorAll('.navItem').forEach(item => {
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('.navItem').forEach(n => n.classList.remove('active'));
+                        item.classList.add('active');
+                        
+                        const sectionId = item.dataset.section + 'Section';
+                        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                        document.getElementById(sectionId).classList.add('active');
+                    });
+                });
+
+                // Вкладки топа
+                document.querySelectorAll('.tabItem').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tabItem').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        document.querySelectorAll('.tabContent').forEach(c => c.classList.remove('active'));
+                        document.getElementById(tab.dataset.tab).classList.add('active');
+                    });
+                });
+
+                // Кнопки
+                document.getElementById('watchAdBtn')?.addEventListener('click', watchAd);
+                document.getElementById('dailyBonusBtn')?.addEventListener('click', dailyBonus);
+                document.getElementById('taskBtn')?.addEventListener('click', getTask);
+                document.getElementById('copyBtn')?.addEventListener('click', copyRefLink);
+                document.getElementById('shareBtn')?.addEventListener('click', shareRefLink);
+                document.getElementById('withdrawBtn')?.addEventListener('click', withdraw);
+            }
+
+            // Запуск
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 </body>
 </html>
